@@ -1,6 +1,11 @@
 export default function Hero() {
     return (
-        <section className="mt-[53px] flex justify-center px-4">
+        <section className=" w-[1167px]
+                             h-[558px]
+                             bg-[#EFEBE2]
+                             rounded-[24px]
+                             px-12
+                             py-16 " >
             <div className="w-full max-w-[1167px] min-h-[558px] rounded-[24px] bg-[#EFEBE2] flex items-center">
                 <div className="pl-[57px] max-w-[520px]">
                     <h1 className="font-serif font-bold text-[48px] leading-[100%] text-[#1E1E1E]">
