@@ -1,50 +1,38 @@
 import { Logo } from "./Logo";
+import { InvestButton } from "./InvestButton";
 
 export default function Header() {
     return (
-        <header className="w-full max-w-[1100px] h-[58px] bg-[#EFEBE2] rounded-full px-6 md:px-10 mb-[6px] grid grid-cols-3 items-center mx-auto">
-            {/* Logo */}
-            <div className="flex items-center gap-10 justify-self-start">
+        <header className="w-[924px] h-[58px] bg-[#FFFFFF] rounded-[26px] mx-auto flex items-center justify-between px-8">
+            {/* Logo - Left */}
+            <div className="flex items-center mr-8">
                 <Logo />
             </div>
 
-            {/* Menu */}
-            <nav className="justify-self-center">
+            {/* Nav - Center */}
+            <nav className="flex-1 flex justify-center">
                 <ul className="flex items-center gap-10 text-sm font-libre text-[#1E1E1E]">
                     <li className="flex items-center gap-2">
                         <span className="text-xs">•</span>
-                        <span className="cursor-pointer hover:opacity-70">
+                        <span className="cursor-pointer hover:opacity-70 whitespace-nowrap">
                             Quem somos
                         </span>
                     </li>
 
-                    <li className="cursor-pointer hover:opacity-70">
+                    <li className="cursor-pointer hover:opacity-70 whitespace-nowrap">
                         Estratégias
                     </li>
 
-                    <li className="cursor-pointer hover:opacity-70">
+                    <li className="cursor-pointer hover:opacity-70 whitespace-nowrap">
                         Contato
                     </li>
                 </ul>
             </nav>
 
-
-            {/* Botão */}
-            <button
-                className="
-      bg-[#9F8762]
-      text-[#1E1E1E]
-      px-4
-      py-1.5
-      rounded-full
-      text-sm
-      font-libre
-    "
-                style={{ justifySelf: 'end' }}
-            >
-                Quero investir!
-            </button>
+            {/* Button - Right */}
+            <div className="flex items-center ml-8">
+                <InvestButton />
+            </div>
         </header>
-
     );
 }

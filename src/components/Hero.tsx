@@ -1,41 +1,21 @@
+import { InvestButton } from "./InvestButton";
+
 export default function Hero() {
     return (
-        <section className=" w-[1167px]
-                             h-[558px]
-                             bg-[#EFEBE2]
-                             rounded-[24px]
-                             px-12
-                             py-16 " >
-            <div className="w-full max-w-[1167px] min-h-[558px] rounded-[24px] bg-[#EFEBE2] flex items-center">
-                <div className="pl-[57px] max-w-[520px]">
-                    <h1 className="font-serif font-bold text-[48px] leading-[100%] text-[#1E1E1E]">
-                        Não Siga a Manada.
-                        <br />
-                        Lidere Seu Próximo Passo!
-                    </h1>
+        <section className="w-[1167px] h-[558px] bg-[#EFEBE2] rounded-[24px] px-12 pt-[85px] pb-16 mx-auto">
+            <div className="pl-[57px] max-w-[520px] flex flex-col justify-center h-full">
+                <h1 className="font-libre font-bold text-[48px] leading-[100%] text-[#1E1E1E] w-[674px]">
+                    Não Siga a Manada.
+                    <br />
+                    Lidere Seu Próximo Passo!
+                </h1>
 
-                    <p className="mt-4 font-serif italic text-[20px] leading-[100%] text-[#9F8762]">
-                        Gestão de capital para quem busca resultados além do convencional.
-                    </p>
+                <p className="mt-4 font-libre italic text-[20px] leading-[100%] text-[#9F8762]">
+                    Gestão de capital para quem busca resultados além do convencional.
+                </p>
 
-                    <button
-                        className="
-              mt-8
-              min-w-[180px]
-              h-[37px]
-              rounded-[28px]
-              bg-[#9F8762]
-              px-6
-              font-serif
-              text-sm
-              text-[#1E1E1E]
-              transition-colors
-              duration-300
-              hover:bg-[#8A7556]
-            "
-                    >
-                        Quero investir!
-                    </button>
+                <div className="mt-8">
+                    <InvestButton />
                 </div>
             </div>
         </section>
