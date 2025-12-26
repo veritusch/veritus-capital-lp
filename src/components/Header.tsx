@@ -13,7 +13,6 @@ export default function Header() {
             <nav className="flex-1 flex justify-center">
                 <ul className="flex items-center gap-10 text-sm font-libre text-[#1E1E1E]">
                     <li className="flex items-center gap-2">
-                        <span className="text-xs">•</span>
                         <span className="cursor-pointer hover:opacity-70 whitespace-nowrap">
                             Quem somos
                         </span>
