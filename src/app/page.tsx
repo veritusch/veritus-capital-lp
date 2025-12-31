@@ -12,7 +12,7 @@ export default function Home() {
         <Hero />
       </div>
       <div>
-        {/* <TickerBar /> */}
+        <TickerBar />
       </div>
     </main>
   );

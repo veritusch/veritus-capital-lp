@@ -75,3 +75,9 @@
         letter-spacing: 0%;
     }
 }
+/* Classes de utilitários customizadas */
+@layer utilities {
+    .animate-scroll {
+        animation: var(--animate-scroll);
+    }
+}
