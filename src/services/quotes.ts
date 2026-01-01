@@ -15,8 +15,8 @@ export async function getQuotes() {
                 const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${apiKey}`;
                 
                 const res = await fetch(url, { 
-                    cache: "no-store",
-                    next: { revalidate: 60 }
+                    cache: "force-cache",
+                    next: { revalidate: 3600 } // Cache por 1 hora
                 });
 
                 if (!res.ok) {

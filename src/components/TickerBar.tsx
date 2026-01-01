@@ -24,8 +24,7 @@ export default function TickerBar() {
 
     useEffect(() => {
         load();
-        const i = setInterval(load, 60000);
-        return () => clearInterval(i);
+        // Busca apenas uma vez ao carregar o componente
     }, []);
 
     if (!quotes.length) return null;
