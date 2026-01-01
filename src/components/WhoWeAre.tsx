@@ -1,28 +1,31 @@
 export default function WhoWeAre() {
     return (
-        <section className="mx-auto mt-24 w-[1167px]">
-            <div className="flex justify-center gap-6">
+        <section className="mx-auto mt-18 w-full px-4 md:w-[1167px] md:px-0">
+            <div className="flex flex-col items-center gap-6 md:flex-row md:justify-center">
+
                 {/* Card esquerdo */}
                 <div className="
-                        w-[287px]
-                        h-[247px]
+                        w-full
                         rounded-[26px]
                         bg-brand-brown
-                        p-8
+                        p-6
                         text-brand-light
                         flex
                         flex-col
                         justify-between
+                        md:w-[287px]
+                        md:h-[247px]
+                        md:p-8
                 ">
                     <span className="text-sm opacity-80 typography-helvetica-italic">
                         Precisamos de um texto
                     </span>
 
-                    <div>
-                        <p className="text-[40px] typography-title leading-none">
+                    <div className="mt-6 md:mt-0">
+                        <p className="text-[36px] leading-none md:text-[40px] typography-title">
                             +20 Mi
                         </p>
-                        <p className="mt-1 text-sm typography-helvetica-italic opacity-80">
+                        <p className="mt-1 text-sm opacity-80 typography-helvetica-italic">
                             Em ativos investidos
                         </p>
                     </div>
@@ -31,17 +34,19 @@ export default function WhoWeAre() {
                 {/* Card direito */}
                 <div
                     className="
-                        w-[575px]
-                        h-[247px]
+                        w-full
                         rounded-[26px]
                         bg-white
-                        p-8
+                        p-6
                         flex
                         flex-col
-                        justify-center
+                        md:w-[575px]
+                        md:h-[247px]
+                        md:p-8
+                        md:justify-center
                     "
                 >
-                    <h2 className="typography-title text-4xl text-brand-dark-deep">
+                    <h2 className="text-xl text-brand-text-primary md:text-4xl typography-title text-brand-dark-deep">
                         Quem somos
                     </h2>
 
