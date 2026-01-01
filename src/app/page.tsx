@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import Hero from "../components/Hero";
-import TickerBar from "../components/TickerBar";
+import WhoWeAre from "../components/WhoWeAre";
 
 export default function Home() {
   return (
@@ -11,9 +11,9 @@ export default function Home() {
       <div className="-mt-[32px]">
         <Hero />
       </div>
-      {/* <div>
-        <TickerBar />
-      </div> */}
+      <div>
+        <WhoWeAre />
+      </div>
     </main>
   );
 }
