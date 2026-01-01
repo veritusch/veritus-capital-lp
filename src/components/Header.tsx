@@ -1,7 +1,15 @@
+"use client";
 import { Logo } from "./Logo";
 import { InvestButton } from "./InvestButton";
 
 export default function Header() {
+    const scrollToSection = (sectionId: string) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    };
+
     return (
         <header className="w-full h-auto bg-brand-light rounded-[24px] mx-auto flex items-center justify-between px-4 py-4 md:w-[924px] md:h-[58px] md:rounded-[26px] md:px-8 md:py-0">
             {/* Logo - Left */}
@@ -13,12 +21,18 @@ export default function Header() {
             <nav className="hidden md:flex md:flex-1 md:justify-center">
                 <ul className="flex items-center gap-10 text-sm font-libre text-[#1E1E1E]">
                     <li className="flex items-center gap-2">
-                        <span className="cursor-pointer hover:opacity-70 whitespace-nowrap">
+                        <span 
+                            className="cursor-pointer hover:opacity-70 whitespace-nowrap"
+                            onClick={() => scrollToSection("quem-somos")}
+                        >
                             Quem somos
                         </span>
                     </li>
 
-                    <li className="cursor-pointer hover:opacity-70 whitespace-nowrap">
+                    <li 
+                        className="cursor-pointer hover:opacity-70 whitespace-nowrap"
+                        onClick={() => scrollToSection("estrategias")}
+                    >
                         Estratégias
                     </li>
 

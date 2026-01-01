@@ -12,8 +12,12 @@ export default function Home() {
       <div className="-mt-[32px]">
         <Hero />
       </div>
-        <WhoWeAre />
-        <Strategies />
+        <div id="quem-somos">
+          <WhoWeAre />
+        </div>
+        <div id="estrategias">
+          <Strategies />
+        </div>
     </main>
   );
 }
