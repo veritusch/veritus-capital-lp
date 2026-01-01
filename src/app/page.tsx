@@ -11,9 +11,9 @@ export default function Home() {
       <div className="-mt-[32px]">
         <Hero />
       </div>
-      <div>
+      {/* <div>
         <TickerBar />
-      </div>
+      </div> */}
     </main>
   );
 }

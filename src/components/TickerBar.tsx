@@ -14,16 +14,11 @@ export default function TickerBar() {
     async function load() {
         try {
             const res = await fetch("/api/quotes");
-            if (!res.ok) {
-                const errorData = await res.json();
-                console.error('API Error:', errorData);
-                return;
-            }
             const data = await res.json();
-            console.log('Quotes loaded:', data);
+            console.log('data :>> ', data);
             setQuotes(data);
-        } catch (error) {
-            console.error('Failed to load quotes:', error);
+        } catch (err) {
+            console.error("Failed to load quotes", err);
         }
     }
 
@@ -33,28 +28,49 @@ export default function TickerBar() {
         return () => clearInterval(i);
     }, []);
 
+    if (!quotes.length) return null;
+
     return (
-        <div className="w-full bg-[#0c0c0c] border-y border-neutral-800 overflow-hidden">
-            <div className="flex gap-6 whitespace-nowrap animate-scroll py-2 will-change-transform">
-                {quotes.map(q => {
-                    const positive = q.percent >= 0;
-                    return (
-                        <div
-                            key={q.symbol}
-                            className="flex items-center gap-3 bg-[#141414] px-4 py-2 rounded-full border border-neutral-800 shadow-sm"
-                        >
-                            <span className="font-semibold text-white">{q.symbol}</span>
+        <div className="absolute bottom-0 left-0 w-full bg-brand-dark-deep border-t border-neutral-800">
+            <div className="overflow-hidden">
+                <div className="flex w-max animate-ticker gap-3 px-4 py-1.5">
+                    {[...quotes, ...quotes].map((q, i) => {
+                        const positive = q.percent >= 0;
 
-                            <span className="text-gray-300">
-                                {q.price?.toFixed(2)}
-                            </span>
+                        return (
+                            <div
+                                key={`${q.symbol}-${i}`}
+                                className="
+                                    flex items-center gap-2
+                                    rounded-full
+                                    bg-[#141414]
+                                    px-3 py-1
+                                    text-xs
+                                    border border-neutral-800
+                                "
+                            >
+                                <span className="font-medium text-white">
+                                    {q.symbol}
+                                </span>
 
-                            <span className={positive ? "text-green-400" : "text-red-400"}>
-                                {q.change?.toFixed(2)} ({q.percent?.toFixed(2)}%)
-                            </span>
-                        </div>
-                    );
-                })}
+                                <span className="text-neutral-400">
+                                    {q.price.toFixed(2)}
+                                </span>
+
+                                <span
+                                    className={
+                                        positive
+                                            ? "text-green-400"
+                                            : "text-red-400"
+                                    }
+                                >
+                                    {positive ? "+" : ""}
+                                    {q.percent.toFixed(2)}%
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

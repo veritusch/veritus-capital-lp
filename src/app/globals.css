@@ -22,18 +22,18 @@
     --font-family-sans: var(--font-inter), sans-serif;
     --font-family-helvetica: Helvetica, Arial, sans-serif;
 
-    /* Animações */
-    @keyframes scroll {
-        from {
+    /* Animação Ticker (correta e infinita) */
+    @keyframes ticker {
+        0% {
             transform: translateX(0);
         }
 
-        to {
+        100% {
             transform: translateX(-50%);
         }
     }
 
-    --animate-scroll: scroll 25s linear infinite;
+    --animate-ticker: ticker 60s linear infinite;
 }
 
 /* Classes de tipografia customizadas */
@@ -75,9 +75,10 @@
         letter-spacing: 0%;
     }
 }
+
 /* Classes de utilitários customizadas */
 @layer utilities {
-    .animate-scroll {
-        animation: var(--animate-scroll);
+    .animate-ticker {
+        animation: var(--animate-ticker);
     }
 }
