@@ -1,3 +1,4 @@
+import Calculators from "../components/Calculators";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Strategies from "../components/Strategies";
@@ -17,6 +18,9 @@ export default function Home() {
         </div>
         <div id="estrategias">
           <Strategies />
+        </div>
+        <div>
+          <Calculators />
         </div>
     </main>
   );
