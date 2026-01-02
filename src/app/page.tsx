@@ -1,6 +1,7 @@
 import Calculators from "../components/Calculators";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
+import Newsletter from "../components/Newsletter";
 import Strategies from "../components/Strategies";
 import WhoWeAre from "../components/WhoWeAre";
 
@@ -19,8 +20,11 @@ export default function Home() {
         <div id="estrategias">
           <Strategies />
         </div>
-        <div>
+        <div id="calculadoras">
           <Calculators />
+        </div>
+        <div id="noticias">
+          <Newsletter />
         </div>
     </main>
   );
