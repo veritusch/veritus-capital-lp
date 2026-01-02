@@ -69,6 +69,8 @@ export default function Estrategias() {
                         leading-tight
                         md:text-4xl
                         md:ml-10
+                        text-center
+                        md:text-left
                     "
                 >
                     Como simplificamos

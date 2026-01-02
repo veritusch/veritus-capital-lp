@@ -3,7 +3,7 @@ export default function Calculators() {
         <section className="w-full bg-brand-dark py-16">
             <div className="mx-auto w-full max-w-[1167px] px-4 md:px-0">
                 {/* TÍTULO */}
-                <div className="mb-16 max-w-[440px]">
+                <div className="mb-16 text-center md:max-w-[440px] md:text-left">
                     <h2 className="typography-title text-brand-text-light text-3xl">
                         Calculadoras
                     </h2>
@@ -34,13 +34,12 @@ export default function Calculators() {
                     </div>
                 </div>
 
-
                 {/* MOBILE */}
-                <div className="flex flex-col gap-4 md:hidden">
-                    <CalcCardSmall title="Juros Compostos" />
-                    <CalcCardSmall title="Planilha de Investimentos" />
-                    <CalcCardWide title="Juros Simples horizontal" />
-                    <CalcCardTall title="Juros Simples vertical" />
+                <div className="flex flex-col items-center gap-4 md:hidden">
+                    <CalcCardSmall title="Juros Compostos" mobile />
+                    <CalcCardSmall title="Planilha de Investimentos" mobile />
+                    <CalcCardWide title="Juros Simples horizontal" mobile />
+                    <CalcCardTall title="Juros Simples vertical" mobile />
                 </div>
             </div>
         </section>
@@ -74,25 +73,61 @@ function BaseCard({
     );
 }
 
-function CalcCardSmall({ title }: { title: string }) {
+function CalcCardSmall({
+    title,
+    mobile,
+}: {
+    title: string;
+    mobile?: boolean;
+}) {
     return (
-        <BaseCard className="h-[135px] w-[252px] text-sm md:text-base">
+        <BaseCard
+            className={`
+                h-[135px]
+                ${mobile ? "w-full max-w-[320px]" : "w-[252px]"}
+                text-sm md:text-base
+            `}
+        >
             {title}
         </BaseCard>
     );
 }
 
-function CalcCardWide({ title }: { title: string }) {
+function CalcCardWide({
+    title,
+    mobile,
+}: {
+    title: string;
+    mobile?: boolean;
+}) {
     return (
-        <BaseCard className="h-[167px] w-[510px] text-sm md:text-base">
+        <BaseCard
+            className={`
+                h-[167px]
+                ${mobile ? "w-full max-w-[320px]" : "w-[510px]"}
+                text-sm md:text-base
+            `}
+        >
             {title}
         </BaseCard>
     );
 }
 
-function CalcCardTall({ title }: { title: string }) {
+function CalcCardTall({
+    title,
+    mobile,
+}: {
+    title: string;
+    mobile?: boolean;
+}) {
     return (
-        <BaseCard className="h-[308px] w-[244px] text-sm md:text-base">
+        <BaseCard
+            className={`
+                h-[308px]
+                ${mobile ? "w-full max-w-[320px]" : "w-[244px]"}
+                text-sm md:text-base
+            `}
+        >
             {title}
         </BaseCard>
     );

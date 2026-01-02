@@ -6,29 +6,61 @@ export default function Hero() {
         <section
             className="
                 relative
-                w-full
-                min-h-[500px]
-                bg-brand-beige
-                rounded-[24px]
-                px-4
-                pt-12
-                pb-20
                 mx-auto
+                w-full
                 overflow-hidden
+                rounded-[24px]
+                bg-brand-beige
+                px-4
+                pt-20
+                pb-24
                 md:w-[1167px]
                 md:h-[558px]
                 md:px-12
                 md:pt-[85px]
             "
         >
-            <div className="flex flex-col justify-center h-full md:pl-[57px] md:max-w-[520px]">
-                <h1 className="typography-title text-[32px] leading-tight text-brand-text-primary w-full md:mt-20 md:text-[48px] md:w-[674px]">
+            {/* CONTEÚDO */}
+            <div
+                className="
+                    flex
+                    h-full
+                    flex-col
+                    items-center
+                    justify-center
+                    text-center
+                    md:items-start
+                    md:text-left
+                    md:pl-[57px]
+                    md:max-w-[520px]
+                "
+            >
+                <h1
+                    className="
+                        typography-title
+                        text-brand-text-primary
+                        text-[28px]
+                        leading-tight
+                        md:mt-20
+                        md:w-[674px]
+                        md:text-[48px]
+                    "
+                >
                     Não Siga a Manada.
                     <br />
                     Lidere Seu Próximo Passo!
                 </h1>
 
-                <p className="mt-6 typography-text-italic text-[16px] text-brand-brown md:mt-12 md:text-[20px]">
+                <p
+                    className="
+                        mt-4
+                        typography-text-italic
+                        text-[15px]
+                        text-brand-brown
+                        md:mt-12
+                        md:text-[20px]
+                    "
+                >
                     Gestão de capital para quem busca resultados além do convencional.
                 </p>
 
@@ -37,8 +69,10 @@ export default function Hero() {
                 </div>
             </div>
 
-            {/* TickerBar agora VIVE dentro do Hero */}
-            <TickerBar />
+            {/* TICKER BAR */}
+            <div className="mt-10 md:mt-0">
+                <TickerBar />
+            </div>
         </section>
     );
 }
