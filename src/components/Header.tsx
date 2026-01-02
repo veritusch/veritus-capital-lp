@@ -1,5 +1,5 @@
 "use client";
-import { Logo } from "./Logo";
+import { LogoBlack } from "./LogoBlack";
 import { InvestButton } from "./InvestButton";
 
 export default function Header() {
@@ -14,7 +14,7 @@ export default function Header() {
         <header className="w-full h-auto bg-brand-light rounded-[24px] mx-auto flex items-center justify-between px-4 py-4 md:w-[924px] md:h-[58px] md:rounded-[26px] md:px-8 md:py-0">
             {/* Logo - Left */}
             <div className="flex items-center md:mr-8">
-                <Logo />
+                <LogoBlack />
             </div>
 
             {/* Nav - Center (Oculto no mobile) */}

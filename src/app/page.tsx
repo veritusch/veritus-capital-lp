@@ -1,4 +1,5 @@
 import Calculators from "../components/Calculators";
+import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Newsletter from "../components/Newsletter";
@@ -26,6 +27,7 @@ export default function Home() {
         <div id="noticias">
           <Newsletter />
         </div>
+      <Footer />
     </main>
   );
 }
