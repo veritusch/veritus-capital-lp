@@ -9,19 +9,19 @@ type Strategy = {
 
 const strategies: Strategy[] = [
     {
-        title: "Estratégia Moderada",
-        description:
-            "Equilíbrio entre segurança e crescimento, buscando retornos consistentes.",
-    },
-    {
         title: "Estratégia Conservadora",
         description:
             "Preservação de capital com foco em estabilidade e controle de risco.",
     },
     {
-        title: "Estratégia 3",
+        title: "Estratégia Moderada",
         description:
-            "Precisamos ainda definir qual será o texto que falaremos.",
+            "Equilíbrio entre segurança e crescimento, buscando retornos consistentes.",
+    },
+    {
+        title: "Estratégia Arrojada",
+        description:
+            "Foco em crescimento acelerado com maior tolerância a risco para maximizar retornos.",
     },
 ];
 
@@ -45,7 +45,7 @@ export default function Estrategias() {
 
         setTimeout(() => {
             lock.current = false;
-        }, 600);
+        }, 300);
     }
 
     useEffect(() => {
@@ -94,8 +94,8 @@ export default function Estrategias() {
                                     translateY(${offset * 28}px)
                                     scale(${1 - Math.abs(offset) * 0.04})
                                 `,
-                                opacity: Math.abs(offset) > 1 ? 0 : 1,
-                                zIndex: strategies.length - index,
+                                opacity: 1,
+                                zIndex: strategies.length - Math.abs(offset),
                                 pointerEvents: offset === 0 ? "auto" : "none",
                             }}
                         >
