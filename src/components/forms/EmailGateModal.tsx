@@ -34,17 +34,17 @@ export default function EmailGateModal({
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
-                <h2 className="text-xl font-semibold text-gray-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-xl bg-brand-dark-bg-chumbo p-8 shadow-2xl">
+                <h2 className="typography-title text-2xl text-brand-text-light">
                     Seja bem-vindo!
                 </h2>
 
-                <p className="mt-2 text-sm text-gray-600">
+                <p className="mt-2 typography-helvetica text-sm text-brand-text-light/70">
                     Para continuar, informe seu email.
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     <input
                         type="email"
                         placeholder="seu@email.com"
@@ -53,16 +53,16 @@ export default function EmailGateModal({
                             setEmail(e.target.value)
                             setError("")
                         }}
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-black focus:outline-none"
+                        className="w-full rounded-lg bg-brand-dark-bg-primary border border-brand-brown/30 px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none focus:border-brand-brown transition-colors"
                     />
 
                     {error && (
-                        <p className="text-sm text-red-600">{error}</p>
+                        <p className="typography-helvetica text-sm text-red-400">{error}</p>
                     )}
 
                     <button
                         type="submit"
-                        className="w-full rounded-lg bg-black py-2 text-white transition hover:bg-gray-800"
+                        className="w-full bg-brand-brown text-brand-light h-[45px] rounded-[28px] typography-helvetica-bold hover:opacity-90 transition-opacity"
                     >
                         Continuar
                     </button>
