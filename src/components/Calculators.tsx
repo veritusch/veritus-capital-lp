@@ -3,7 +3,7 @@ export default function Calculators() {
         <section className="w-full bg-brand-dark py-16">
             <div className="mx-auto w-full max-w-[1167px] px-4 md:px-0">
                 {/* TÍTULO */}
-                <div className="mb-16 text-center md:max-w-[440px] md:text-left">
+                <div className="mb-16 text-center">
                     <h2 className="typography-title text-brand-text-light text-3xl">
                         Calculadoras
                     </h2>
@@ -14,32 +14,15 @@ export default function Calculators() {
                 </div>
 
                 {/* GRID DESKTOP */}
-                <div className="hidden md:flex md:justify-center">
-                    <div className="grid grid-cols-[252px_252px_244px] gap-2">
-                        {/* Coluna 1 */}
-                        <div className="flex flex-col gap-2">
-                            <CalcCardSmall title="Juros Compostos" />
-                            <CalcCardWide title="Juros Simples horizontal" />
-                        </div>
-
-                        {/* Coluna 2 */}
-                        <div className="flex flex-col gap-2">
-                            <CalcCardSmall title="Planilha de Investimentos" />
-                        </div>
-
-                        {/* Coluna 3 */}
-                        <div>
-                            <CalcCardTall title="Juros Simples vertical" />
-                        </div>
-                    </div>
+                <div className="hidden md:flex md:justify-center md:gap-4">
+                    <CalcCardTall title="Juros Simples" />
+                    <CalcCardTall title="Planilha de Custos Mensais" />
                 </div>
 
                 {/* MOBILE */}
                 <div className="flex flex-col items-center gap-4 md:hidden">
-                    <CalcCardSmall title="Juros Compostos" mobile />
-                    <CalcCardSmall title="Planilha de Investimentos" mobile />
-                    <CalcCardWide title="Juros Simples horizontal" mobile />
-                    <CalcCardTall title="Juros Simples vertical" mobile />
+                    <CalcCardTall title="Juros Simples" mobile />
+                    <CalcCardTall title="Planilha de Custos Mensais" mobile />
                 </div>
             </div>
         </section>
