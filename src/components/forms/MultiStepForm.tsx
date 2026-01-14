@@ -29,6 +29,8 @@ interface FormData {
   observacoes: string;
 }
 
+const SELECT_TRANSITION_DELAY_MS = 250;
+
 export default function MultiStepForm({ token }: FormProps) {
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,22 +111,30 @@ export default function MultiStepForm({ token }: FormProps) {
 
   function canProceed() {
     if (!currentStep.required) return true;
-    
+
     const value = formData[currentStep.name];
-    
+
     // Validação específica por tipo de campo
+    if (currentStep.type === "email") {
+      const trimmed = value.trim();
+      if (!trimmed) return false;
+      // Validação básica de formato de e-mail: texto@texto.dominio
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(trimmed);
+    }
+
     if (currentStep.type === "tel") {
       // Telefone precisa ter pelo menos 10 dígitos: DDD + 8 dígitos
       const numbers = value.replace(/\D/g, "");
-      return numbers.length >= 10;
+      return numbers.length >= 11;
     }
-    
+
     if (currentStep.type === "currency") {
       // Valor precisa ter pelo menos um número
       const numbers = value.replace(/\D/g, "");
       return numbers.length > 0;
     }
-    
+
     return Boolean(value && value.trim());
   }
 
@@ -265,7 +275,7 @@ export default function MultiStepForm({ token }: FormProps) {
                   type="button"
                   onClick={() => {
                     handleChange(currentStep.name, opt.value);
-                    setTimeout(handleNext, 250);
+                    setTimeout(handleNext, SELECT_TRANSITION_DELAY_MS);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
