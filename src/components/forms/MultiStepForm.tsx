@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import PhoneInput from "./inputs/PhoneInput";
 import CurrencyInput from "./inputs/CurrencyInput";
 import TextInput from "./inputs/TextInput";
@@ -163,21 +164,20 @@ export default function MultiStepForm({ token }: FormProps) {
   }
 
   return (
-    <div className="mx-auto max-w-xl w-full rounded-xl bg-brand-dark-bg-chumbo p-8 shadow-lg">
-      {/* Header com indicador de etapa */}
-      <div className="mb-6">
-        <p className="typography-helvetica text-sm text-brand-text-light/60 mb-4">
-          Etapa {step + 1} de {steps.length}
-        </p>
-
-        {/* Progress */}
-        <div className="h-1 w-full bg-brand-dark-bg-primary rounded">
-          <div
-            className="h-1 bg-brand-brown rounded transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+    <div className="mx-auto max-w-xl w-full px-4">
+      {/* Logo */}
+      <div className="flex justify-center mb-16 pt-8">
+        <Image
+          src="/logo_veritus_branca.svg"
+          alt="Veritus"
+          width={240}
+          height={60}
+          priority
+        />
       </div>
+
+      {/* Header com indicador de etapa */}
+      
 
       {/* Renderiza apenas o step atual */}
       <div className="relative min-h-[280px]">
@@ -255,7 +255,7 @@ export default function MultiStepForm({ token }: FormProps) {
               ref={inputRef as any}
               rows={4}
               placeholder="Opcional..."
-              className="w-full rounded-lg bg-brand-dark-bg-primary border border-brand-brown/30 px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/20 transition-all resize-none"
+              className="w-full rounded-lg bg-brand-dark-bg-chumbo px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none transition-all resize-none shadow-[2px_2px_8px_rgba(0,0,0,0.3)]"
               value={formData[currentStep.name]}
               onChange={(e) => handleChange(currentStep.name, e.target.value)}
               onKeyDown={(e) => {
@@ -309,7 +309,7 @@ export default function MultiStepForm({ token }: FormProps) {
             type="button"
             onClick={handleBack}
             tabIndex={0}
-            className="flex items-center gap-2 typography-helvetica-bold text-sm text-brand-text-light/70 hover:text-brand-text-light transition-colors group"
+            className="flex items-center gap-2 typography-helvetica-bold text-sm text-brand-text-light/60 hover:text-brand-text-light transition-colors group"
           >
             <svg
               className="w-5 h-5 transition-transform group-hover:-translate-x-1"
@@ -336,9 +336,9 @@ export default function MultiStepForm({ token }: FormProps) {
             onClick={handleNext}
             disabled={!canProceed()}
             tabIndex={0}
-            className="bg-brand-brown text-brand-light h-[45px] px-8 rounded-[28px] typography-helvetica-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="bg-brand-golden brand-text-light-alt h-[45px] px-8 rounded-[28px] typography-helvetica-bold hover:opacity-70 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            Continuar →
+            Avançar
           </button>
         ) : (
           <button

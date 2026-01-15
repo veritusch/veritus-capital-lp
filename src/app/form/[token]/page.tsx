@@ -13,14 +13,14 @@ export default function FormPage() {
 
     if (isLoading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-brand-dark-bg-primary">
+            <div className="flex min-h-screen items-center justify-center bg-brand-dark-bg-secondary">
                 <p className="typography-helvetica text-brand-text-light">Carregando...</p>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-brand-dark-bg-primary p-6 flex items-center justify-center">
+        <div className="min-h-screen bg-brand-dark-bg-secondary p-6 flex items-center justify-center">
             <EmailGateModal
                 isOpen={!hasAccess}
                 onSubmit={saveEmail}

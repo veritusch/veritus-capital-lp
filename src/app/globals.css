@@ -8,17 +8,18 @@
     --color-brand-beige-alt: #e0d9c9;
     --color-brand-beige-subtle: #f8f7f3;
     --color-brand-beige-extra-subtle: #eeede9;
-
     --color-brand-dark: #1e1e1e;
     --color-brand-dark-deep: #161616;
     --color-brand-dark-bg-primary: #1c1c1d;
+    --color-brand-dark-bg-secondary: #18191b;
     --color-brand-dark-bg-chumbo: #252728;
+    --color-brand-dark-bg-absolute: #000000;
     --color-brand-white-bg-primary: #e2e5e9;
-
-    --color-brand-light: #ffffff;
-
+    --color-brand-light: #ededed;
     --color-brand-text-primary: #1e1e1e;
     --color-brand-text-light: #f8f7f3;
+    --color-brand-text-light-alt: #565656;
+    --color-brand-golden: #bda277;
 
     /* Fontes */
     --font-family-serif: var(--font-libre), serif;

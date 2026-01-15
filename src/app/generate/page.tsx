@@ -26,26 +26,38 @@ export default function GeneratePage() {
 
     if (isLoading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-brand-dark-bg-primary">
+            <div className="flex min-h-screen items-center justify-center bg-brand-dark-bg-secondary">
                 <p className="typography-helvetica text-brand-text-light">Carregando...</p>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-brand-dark-bg-primary p-6 flex items-center justify-center">
+        <div className="min-h-screen bg-brand-dark-bg-secondary p-6 flex items-center justify-center">
             <PasswordGateModal
                 isOpen={!isAuthorized}
                 onSubmit={authorize}
             />
 
             {isAuthorized && (
-                <div className="mx-auto max-w-xl w-full rounded-xl bg-brand-dark-bg-chumbo p-8 shadow-lg space-y-6">
-                    <h1 className="typography-title text-3xl text-brand-text-light text-center">
-                        Gerar link de formulário
-                    </h1>
+                <div className="mx-auto max-w-xl w-full px-4">
+                    {/* Logo */}
+                    <div className="flex justify-center mb-16 pt-8">
+                        <Image
+                            src="/logo_veritus_branca.svg"
+                            alt="Veritus"
+                            width={240}
+                            height={60}
+                            priority
+                        />
+                    </div>
 
-                    <button
+                    <div className="space-y-6">
+                        <h1 className="typography-title text-3xl text-brand-text-light text-center">
+                            Gerar link de formulário
+                        </h1>
+
+                        <button
                         onClick={handleGenerate}
                         className="bg-brand-brown text-brand-light w-full h-[45px] rounded-[28px] typography-helvetica-bold text-sm hover:opacity-90 transition-opacity"
                     >
@@ -82,13 +94,14 @@ export default function GeneratePage() {
                         </div>
                     )}
 
-                    <div className="flex justify-end">
-                        <button
-                            onClick={logout}
-                            className="typography-helvetica text-sm text-brand-text-light/60 hover:text-brand-text-light underline transition-colors"
-                        >
-                            Sair
-                        </button>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={logout}
+                                className="typography-helvetica text-sm text-brand-text-light/60 hover:text-brand-text-light underline transition-colors"
+                            >
+                                Sair
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
