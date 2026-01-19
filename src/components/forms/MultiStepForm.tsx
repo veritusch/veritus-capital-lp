@@ -208,7 +208,7 @@ export default function MultiStepForm({ token }: FormProps) {
       name: "valorInvestimento",
       label: "Qual valor pretende investir?",
       type: "currency",
-      placeholder: "R$ 100.000",
+      placeholder: "R$ 100.000,00",
       required: true,
     },
     {

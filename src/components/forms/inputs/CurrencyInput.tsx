@@ -18,11 +18,15 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       
       if (!numbers) return "";
 
-      // Converte para número e formata
-      const numberValue = parseInt(numbers, 10);
+      // Converte para centavos (últimos 2 dígitos são os centavos)
+      const cents = parseInt(numbers, 10);
+      const reais = cents / 100;
       
-      // Formata com separador de milhares
-      const formatted = numberValue.toLocaleString("pt-BR");
+      // Formata com separador de milhares e decimais
+      const formatted = reais.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
       
       return `R$ ${formatted}`;
     }
@@ -36,8 +40,8 @@ const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       <input
         ref={ref}
         type="text"
-        inputMode="numeric"
-        placeholder={placeholder || "R$ 100.000"}
+        inputMode="decimal"
+        placeholder={placeholder || "R$ 100.000,00"}
         tabIndex={tabIndex}
         className="w-full rounded-lg bg-brand-dark-bg-chumbo px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none transition-all shadow-[2px_2px_8px_rgba(0,0,0,0.3)]"
         value={value}
