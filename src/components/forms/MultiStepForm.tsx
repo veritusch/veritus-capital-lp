@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import PhoneInput from "./inputs/PhoneInput";
 import CurrencyInput from "./inputs/CurrencyInput";
@@ -39,7 +39,10 @@ interface FormData {
   dataInicioContrato: string;
   dataNascimentoCliente?: string;
   valorInvestimento: string;
-  chavePixCliente: string;
+  desejaAdicionarHerdeiros?: string;
+  quantidadeHerdeiros?: string;
+  desejaDepositoTerceiro?: string;
+  chavePixCliente?: string;
   nomeHerdeiro1?: string;
   nomeHerdeiro2?: string;
   nomeHerdeiro3?: string;
@@ -82,6 +85,9 @@ export default function MultiStepForm({ token }: FormProps) {
     dataInicioContrato: "",
     dataNascimentoCliente: "",
     chavePixCliente: "",
+    desejaAdicionarHerdeiros: "",
+    quantidadeHerdeiros: "",
+    desejaDepositoTerceiro: "",
     nomeTerceiro: "",
     cpfTerceiro: "",
     nomeBancoTerceiro: "",
@@ -94,132 +100,324 @@ export default function MultiStepForm({ token }: FormProps) {
     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null
   >(null);
 
-  const steps: Step[] = [
-    {
-      name: "nome",
-      label: "Qual é o seu nome completo?",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "dataNascimentoCliente",
-      label: "Qual é a sua data de nascimento?",
-      type: "date",
-      placeholder: "DD/MM/AAAA",
-      required: true,
-    },
-    {
-      name: "email",
-      label: "Qual é o seu melhor e-mail?",
-      type: "email",
-      required: true,
-    },
-    {
-      name: "telefone",
-      label: "Qual é o seu telefone?",
-      type: "tel",
-      required: true,
-    },
-    {
-      name: "cpf",
-      label: "Qual é o seu CPF?",
-      type: "cpf",
-      required: true,
-    },
-    {
-      name: "logradouro",
-      label: "Qual é o seu logradouro?",
-      type: "text",
-      placeholder: "(Rua, Avenida, etc)",
-      required: true,
-    },
-    {
-      name: "numeroResidencia",
-      label: "Qual é o número da sua residência?",
-      type: "text"
-    },
-    {
-      name: "complemento",
-      label: "Qual é o seu Complemento",
-      type: "text",
-      placeholder: "(Apto, Bloco, Casa, etc.)"
-    },
-    {
-      name: "bairro",
-      label: "Qual é o seu bairro?",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "cep",
-      label: "Qual é o seu CEP?",
-      type: "cep",
-      required: true,
-    },
-    {
-      name: "cidade",
-      label: "Qual é a sua cidade?",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "estado",
-      label: "Qual é o seu estado?",
+  const steps: Step[] = useMemo(() => {
+    const baseSteps: Step[] = [
+      {
+        name: "nome",
+        label: "Qual é o seu nome completo?",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "dataNascimentoCliente",
+        label: "Informe sua data de nascimento?",
+        type: "date",
+        placeholder: "DD/MM/AAAA",
+        required: true,
+      },
+      {
+        name: "email",
+        label: "Informe seu melhor e-mail?",
+        type: "email",
+        required: true,
+      },
+      {
+        name: "telefone",
+        label: "Informe seu telefone?",
+        type: "tel",
+        required: true,
+      },
+      {
+        name: "cpf",
+        label: "Informe seu CPF?",
+        type: "cpf",
+        required: true,
+      },
+      {
+        name: "logradouro",
+        label: "Informe seu logradouro?",
+        type: "text",
+        placeholder: "(Rua, Avenida, etc)",
+        required: true,
+      },
+      {
+        name: "numeroResidencia",
+        label: "Informe o número da sua residência?",
+        type: "text"
+      },
+      {
+        name: "complemento",
+        label: "Informe o seu Complemento",
+        type: "text",
+        placeholder: "(Apto, Bloco, Casa, etc.)"
+      },
+      {
+        name: "bairro",
+        label: "Informe o seu bairro?",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "cep",
+        label: "Informe o seu CEP?",
+        type: "cep",
+        required: true,
+      },
+      {
+        name: "cidade",
+        label: "Informe a sua cidade?",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "estado",
+        label: "Informe o seu estado?",
+        type: "select",
+        required: true,
+        options: [
+          { label: "Acre", value: "Acre" },
+          { label: "Alagoas", value: "Alagoas" },
+          { label: "Amapá", value: "Amapá" },
+          { label: "Amazonas", value: "Amazonas" },
+          { label: "Bahia", value: "Bahia" },
+          { label: "Ceará", value: "Ceará" },
+          { label: "Distrito Federal", value: "Distrito Federal" },
+          { label: "Espírito Santo", value: "Espírito Santo" },
+          { label: "Goiás", value: "Goiás" },
+          { label: "Maranhão", value: "Maranhão" },
+          { label: "Mato Grosso", value: "Mato Grosso" },
+          { label: "Mato Grosso do Sul", value: "Mato Grosso do Sul" },
+          { label: "Minas Gerais", value: "Minas Gerais" },
+          { label: "Pará", value: "Pará" },
+          { label: "Paraíba", value: "Paraíba" },
+          { label: "Paraná", value: "Paraná" },
+          { label: "Pernambuco", value: "Pernambuco" },
+          { label: "Piauí", value: "Piauí" },
+          { label: "Rio de Janeiro", value: "Rio de Janeiro" },
+          { label: "Rio Grande do Norte", value: "Rio Grande do Norte" },
+          { label: "Rio Grande do Sul", value: "Rio Grande do Sul" },
+          { label: "Rondônia", value: "Rondônia" },
+          { label: "Roraima", value: "Roraima" },
+          { label: "Santa Catarina", value: "Santa Catarina" },
+          { label: "São Paulo", value: "São Paulo" },
+          { label: "Sergipe", value: "Sergipe" },
+          { label: "Tocantins", value: "Tocantins" },
+        ],
+      },
+      {
+        name: "dataInicioContrato",
+        label: "Qual é a data de início do contrato?",
+        type: "date",
+        placeholder: "DD/MM/AAAA",
+        required: true,
+      },
+      {
+        name: "valorInvestimento",
+        label: "Qual valor pretende investir?",
+        type: "currency",
+        placeholder: "R$ 100.000,00",
+        required: true,
+      },
+      {
+        name: "desejaAdicionarHerdeiros",
+        label: "Deseja adicionar Herdeiros ao contrato?",
+        type: "select",
+        required: true,
+        options: [
+          { label: "Sim", value: "Sim" },
+          { label: "Não", value: "Não" },
+        ],
+      },
+    ];
+
+    // Adiciona pergunta sobre quantidade de herdeiros se a resposta for "Sim"
+    if (formData.desejaAdicionarHerdeiros === "Sim") {
+      baseSteps.push({
+        name: "quantidadeHerdeiros",
+        label: "Quantos herdeiros deseja adicionar?",
+        type: "select",
+        required: true,
+        options: [
+          { label: "1 herdeiro", value: "1" },
+          { label: "2 herdeiros", value: "2" },
+          { label: "3 herdeiros", value: "3" },
+        ],
+      });
+
+      const quantidade = parseInt(formData.quantidadeHerdeiros || "0");
+
+      // Adiciona campos para o Herdeiro 1
+      if (quantidade >= 1) {
+        baseSteps.push(
+          {
+            name: "nomeHerdeiro1",
+            label: "Informe o nome completo do 1º herdeiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "cpfHerdeiro1",
+            label: "Informe o CPF do 1º herdeiro?",
+            type: "cpf",
+            required: true,
+          },
+          {
+            name: "rgHerdeiro1",
+            label: "Informe o RG do 1º herdeiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "grauParentescoHerdeiro1",
+            label: "Informe o grau de parentesco do 1º herdeiro?",
+            type: "text",
+            placeholder: "(Ex: Filho, Cônjuge, Irmão)",
+            required: true,
+          }
+        );
+      }
+
+      // Adiciona campos para o Herdeiro 2
+      if (quantidade >= 2) {
+        baseSteps.push(
+          {
+            name: "nomeHerdeiro2",
+            label: "Informe o nome completo do 2º herdeiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "cpfHerdeiro2",
+            label: "Informe o CPF do 2º herdeiro?",
+            type: "cpf",
+            required: true,
+          },
+          {
+            name: "rgHerdeiro2",
+            label: "Informe o RG do 2º herdeiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "grauParentescoHerdeiro2",
+            label: "Informe o grau de parentesco do 2º herdeiro?",
+            type: "text",
+            placeholder: "(Ex: Filho, Cônjuge, Irmão)",
+            required: true,
+          }
+        );
+      }
+
+      // Adiciona campos para o Herdeiro 3
+      if (quantidade >= 3) {
+        baseSteps.push(
+          {
+            name: "nomeHerdeiro3",
+            label: "Informe o nome completo do 3º herdeiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "cpfHerdeiro3",
+            label: "Informe o CPF do 3º herdeiro?",
+            type: "cpf",
+            required: true,
+          },
+          {
+            name: "rgHerdeiro3",
+            label: "Informe o RG do 3º herdeiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "grauParentescoHerdeiro3",
+            label: "Informe o grau de parentesco do 3º herdeiro?",
+            type: "text",
+            placeholder: "(Ex: Filho, Cônjuge, Irmão)",
+            required: true,
+          }
+        );
+      }
+    }
+
+    // Adiciona pergunta sobre depósito em conta de terceiro
+    baseSteps.push({
+      name: "desejaDepositoTerceiro",
+      label: "Você deseja que os rendimentos mensais sejam depositados em contas de terceiro?",
       type: "select",
       required: true,
       options: [
-        { label: "Acre", value: "Acre" },
-        { label: "Alagoas", value: "Alagoas" },
-        { label: "Amapá", value: "Amapá" },
-        { label: "Amazonas", value: "Amazonas" },
-        { label: "Bahia", value: "Bahia" },
-        { label: "Ceará", value: "Ceará" },
-        { label: "Distrito Federal", value: "Distrito Federal" },
-        { label: "Espírito Santo", value: "Espírito Santo" },
-        { label: "Goiás", value: "Goiás" },
-        { label: "Maranhão", value: "Maranhão" },
-        { label: "Mato Grosso", value: "Mato Grosso" },
-        { label: "Mato Grosso do Sul", value: "Mato Grosso do Sul" },
-        { label: "Minas Gerais", value: "Minas Gerais" },
-        { label: "Pará", value: "Pará" },
-        { label: "Paraíba", value: "Paraíba" },
-        { label: "Paraná", value: "Paraná" },
-        { label: "Pernambuco", value: "Pernambuco" },
-        { label: "Piauí", value: "Piauí" },
-        { label: "Rio de Janeiro", value: "Rio de Janeiro" },
-        { label: "Rio Grande do Norte", value: "Rio Grande do Norte" },
-        { label: "Rio Grande do Sul", value: "Rio Grande do Sul" },
-        { label: "Rondônia", value: "Rondônia" },
-        { label: "Roraima", value: "Roraima" },
-        { label: "Santa Catarina", value: "Santa Catarina" },
-        { label: "São Paulo", value: "São Paulo" },
-        { label: "Sergipe", value: "Sergipe" },
-        { label: "Tocantins", value: "Tocantins" },
+        { label: "Sim", value: "Sim" },
+        { label: "Não", value: "Não" },
       ],
-    },
-    {
-      name: "dataInicioContrato",
-      label: "Qual é a data de início do contrato?",
-      type: "date",
-      placeholder: "DD/MM/AAAA",
-      required: true,
-    },
-    {
-      name: "valorInvestimento",
-      label: "Qual valor pretende investir?",
-      type: "currency",
-      placeholder: "R$ 100.000,00",
-      required: true,
-    },
-    {
-      name: "chavePixCliente",
-      label: "Qual é a sua chave PIX?",
-      type: "text",
-      required: true,
-    }
-  ];
+    });
 
-  const currentStep = steps[step];
+    // Adiciona campos de terceiro se a resposta for "Sim"
+    if (formData.desejaDepositoTerceiro === "Sim") {
+      baseSteps.push(
+        {
+          name: "nomeTerceiro",
+          label: "Informe o nome completo do terceiro?",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "cpfTerceiro",
+          label: "Informe o CPF do terceiro?",
+          type: "cpf",
+          required: true,
+        },
+        {
+          name: "nomeBancoTerceiro",
+          label: "Informe o nome do banco?",
+          type: "text",
+          placeholder: "(Ex: Banco do Brasil, Bradesco, Itaú)",
+          required: true,
+        },
+        {
+          name: "agenciaTerceiro",
+          label: "Informe a agência?",
+          type: "text",
+          placeholder: "(Ex: 0001)",
+          required: true,
+        },
+        {
+          name: "contaTerceiro",
+          label: "Informe o número da conta?",
+          type: "text",
+          placeholder: "(Ex: 12345-6)",
+          required: true,
+        },
+        {
+          name: "chavePixTerceiro",
+          label: "Informe a chave PIX do terceiro?",
+          type: "text",
+          required: true,
+        }
+      );
+    }
+
+    // Adiciona o campo chave PIX do cliente no final
+    if (formData.desejaDepositoTerceiro === "Não") {
+      baseSteps.push({
+        name: "chavePixCliente",
+        label: "Qual é a sua chave PIX?",
+        type: "text"
+      });
+    }
+
+    return baseSteps;
+  }, [formData.desejaAdicionarHerdeiros, formData.quantidadeHerdeiros, formData.desejaDepositoTerceiro]);
+
+  const currentStep = steps[step] ?? steps[steps.length - 1];
+
+  useEffect(() => {
+    if (step >= steps.length) {
+      setStep(steps.length - 1);
+    }
+  }, [steps.length, step]);
+
+  if (!currentStep) return null;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -311,11 +509,11 @@ export default function MultiStepForm({ token }: FormProps) {
       // Data precisa estar no formato DD/MM/AAAA
       const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
       if (!dateRegex.test(stringValue)) return false;
-      
+
       // Valida se é uma data válida
       const [day, month, year] = stringValue.split("/").map(Number);
       const date = new Date(year, month - 1, day);
-      
+
       return (
         date.getFullYear() === year &&
         date.getMonth() === month - 1 &&
@@ -359,18 +557,16 @@ export default function MultiStepForm({ token }: FormProps) {
           alt="Veritus"
           width={240}
           height={60}
+          style={{ width: "auto", height: "auto" }}
           priority
         />
       </div>
-
-      {/* Header com indicador de etapa */}
-
 
       {/* Renderiza apenas o step atual */}
       <div className="relative min-h-[280px]">
         <div className="space-y-5">
           <h2 className="typography-title text-2xl text-brand-text-light leading-tight">
-            {currentStep.label}
+            {currentStep?.label || ""}
           </h2>
 
           {currentStep.type === "text" && (
