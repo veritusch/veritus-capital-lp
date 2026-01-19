@@ -5,12 +5,14 @@ import Image from "next/image";
 import PhoneInput from "./inputs/PhoneInput";
 import CurrencyInput from "./inputs/CurrencyInput";
 import TextInput from "./inputs/TextInput";
+import CPFInput from "./inputs/CPFInput";
+import CEPInput from "./inputs/CEPInput";
 
 interface FormProps {
   token: string;
 }
 
-type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea";
+type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep";
 
 interface Step {
   name: keyof FormData;
@@ -25,9 +27,36 @@ interface FormData {
   nome: string;
   email: string;
   telefone: string;
+  cpf: string;
+  logradouro: string;
+  numeroResidencia?: string;
+  complemento?: string;
+  bairro: string;
+  cep: string;
+  cidade: string;
+  estado: string;
+  dataInicioContrato: Date;
+  dataNascimentoCliente?: Date;
   valorInvestimento: string;
-  perfilInvestidor: string;
-  observacoes: string;
+  chavePixCliente: string;
+  nomeHerdeiro1?: string;
+  nomeHerdeiro2?: string;
+  nomeHerdeiro3?: string;
+  cpfHerdeiro1?: string;
+  cpfHerdeiro2?: string;
+  cpfHerdeiro3?: string;
+  rgHerdeiro1?: string;
+  rgHerdeiro2?: string;
+  rgHerdeiro3?: string;
+  grauParentescoHerdeiro1?: string;
+  grauParentescoHerdeiro2?: string;
+  grauParentescoHerdeiro3?: string;
+  nomeTerceiro: string;
+  cpfTerceiro: string;
+  nomeBancoTerceiro: string;
+  agenciaTerceiro: string;
+  contaTerceiro: string;
+  chavePixTerceiro: string;
 }
 
 const SELECT_TRANSITION_DELAY_MS = 250;
@@ -42,9 +71,22 @@ export default function MultiStepForm({ token }: FormProps) {
     nome: "",
     email: "",
     telefone: "",
+    cpf: "",
+    logradouro: "",
     valorInvestimento: "",
-    perfilInvestidor: "",
-    observacoes: "",
+    bairro: "",
+    cep: "",
+    cidade: "",
+    estado: "",
+    dataInicioContrato: new Date(),
+    dataNascimentoCliente: new Date(),
+    chavePixCliente: "",
+    nomeTerceiro: "",
+    cpfTerceiro: "",
+    nomeBancoTerceiro: "",
+    agenciaTerceiro: "",
+    contaTerceiro: "",
+    chavePixTerceiro: "",
   });
 
   const inputRef = useRef<
@@ -56,6 +98,13 @@ export default function MultiStepForm({ token }: FormProps) {
       name: "nome",
       label: "Qual é o seu nome completo?",
       type: "text",
+      required: true,
+    },
+    {
+      name: "dataNascimentoCliente",
+      label: "Qual é a sua data de nascimento?",
+      type: "text",
+      placeholder: "DD/MM/AAAA",
       required: true,
     },
     {
@@ -71,6 +120,90 @@ export default function MultiStepForm({ token }: FormProps) {
       required: true,
     },
     {
+      name: "cpf",
+      label: "Qual é o seu CPF?",
+      type: "cpf",
+      required: true,
+    },
+    {
+      name: "logradouro",
+      label: "Qual é o seu logradouro?",
+      type: "text",
+      placeholder: "(Rua, Avenida, etc)",
+      required: true,
+    },
+    {
+      name: "numeroResidencia",
+      label: "Qual é o número da sua residência?",
+      type: "text"
+    },
+    {
+      name: "complemento",
+      label: "Qual é o seu Complemento",
+      type: "text",
+      placeholder: "(Apto, Bloco, Casa, etc.)"
+    },
+    {
+      name: "bairro",
+      label: "Qual é o seu bairro?",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "cep",
+      label: "Qual é o seu CEP?",
+      type: "cep",
+      required: true,
+    },
+    {
+      name: "cidade",
+      label: "Qual é a sua cidade?",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "estado",
+      label: "Qual é o seu estado?",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Acre", value: "Acre" },
+        { label: "Alagoas", value: "Alagoas" },
+        { label: "Amapá", value: "Amapá" },
+        { label: "Amazonas", value: "Amazonas" },
+        { label: "Bahia", value: "Bahia" },
+        { label: "Ceará", value: "Ceará" },
+        { label: "Distrito Federal", value: "Distrito Federal" },
+        { label: "Espírito Santo", value: "Espírito Santo" },
+        { label: "Goiás", value: "Goiás" },
+        { label: "Maranhão", value: "Maranhão" },
+        { label: "Mato Grosso", value: "Mato Grosso" },
+        { label: "Mato Grosso do Sul", value: "Mato Grosso do Sul" },
+        { label: "Minas Gerais", value: "Minas Gerais" },
+        { label: "Pará", value: "Pará" },
+        { label: "Paraíba", value: "Paraíba" },
+        { label: "Paraná", value: "Paraná" },
+        { label: "Pernambuco", value: "Pernambuco" },
+        { label: "Piauí", value: "Piauí" },
+        { label: "Rio de Janeiro", value: "Rio de Janeiro" },
+        { label: "Rio Grande do Norte", value: "Rio Grande do Norte" },
+        { label: "Rio Grande do Sul", value: "Rio Grande do Sul" },
+        { label: "Rondônia", value: "Rondônia" },
+        { label: "Roraima", value: "Roraima" },
+        { label: "Santa Catarina", value: "Santa Catarina" },
+        { label: "São Paulo", value: "São Paulo" },
+        { label: "Sergipe", value: "Sergipe" },
+        { label: "Tocantins", value: "Tocantins" },
+      ],
+    },
+    {
+      name: "dataInicioContrato",
+      label: "Qual é a data de início do contrato?",
+      type: "text",
+      placeholder: "DD/MM/AAAA",
+      required: true,
+    },
+    {
       name: "valorInvestimento",
       label: "Qual valor pretende investir?",
       type: "currency",
@@ -78,26 +211,14 @@ export default function MultiStepForm({ token }: FormProps) {
       required: true,
     },
     {
-      name: "perfilInvestidor",
-      label: "Qual é o seu perfil de investidor?",
-      type: "select",
-      options: [
-        { label: "Conservador", value: "conservador" },
-        { label: "Moderado", value: "moderado" },
-        { label: "Arrojado", value: "arrojado" },
-      ],
+      name: "chavePixCliente",
+      label: "Qual é a sua chave PIX?",
+      type: "text",
       required: true,
-    },
-    {
-      name: "observacoes",
-      label: "Quer deixar alguma observação?",
-      type: "textarea",
-    },
+    }
   ];
 
   const currentStep = steps[step];
-  const progress = ((step + 1) / steps.length) * 100;
-  const isValid = canProceed();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -110,14 +231,50 @@ export default function MultiStepForm({ token }: FormProps) {
     }));
   }
 
+  function validateCPF(cpf: string): boolean {
+    const numbers = cpf.replace(/\D/g, "");
+
+    if (numbers.length !== 11) return false;
+
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1+$/.test(numbers)) return false;
+
+    // Validação do primeiro dígito verificador
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(numbers.charAt(i)) * (10 - i);
+    }
+    let digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(numbers.charAt(9))) return false;
+
+    // Validação do segundo dígito verificador
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(numbers.charAt(i)) * (11 - i);
+    }
+    digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(numbers.charAt(10))) return false;
+
+    return true;
+  }
+
   function canProceed() {
     if (!currentStep.required) return true;
 
     const value = formData[currentStep.name];
 
+    // Verifica se o valor existe e é uma string
+    if (!value) return false;
+
+    const stringValue = typeof value === 'string' ? value :
+      Array.isArray(value) ? value[0] || '' :
+        String(value);
+
     // Validação específica por tipo de campo
     if (currentStep.type === "email") {
-      const trimmed = value.trim();
+      const trimmed = stringValue.trim();
       if (!trimmed) return false;
       // Validação básica de formato de e-mail: texto@texto.dominio
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -126,17 +283,30 @@ export default function MultiStepForm({ token }: FormProps) {
 
     if (currentStep.type === "tel") {
       // Telefone precisa ter pelo menos 10 dígitos: DDD + 8 dígitos
-      const numbers = value.replace(/\D/g, "");
+      const numbers = stringValue.replace(/\D/g, "");
       return numbers.length >= 11;
     }
 
     if (currentStep.type === "currency") {
       // Valor precisa ter pelo menos um número
-      const numbers = value.replace(/\D/g, "");
+      const numbers = stringValue.replace(/\D/g, "");
       return numbers.length > 0;
     }
 
-    return Boolean(value && value.trim());
+    if (currentStep.type === "cpf") {
+      // CPF precisa ter exatamente 11 dígitos e ser válido
+      const numbers = stringValue.replace(/\D/g, "");
+      if (numbers.length !== 11) return false;
+      return validateCPF(stringValue);
+    }
+
+    if (currentStep.type === "cep") {
+      // CEP precisa ter exatamente 8 dígitos
+      const numbers = stringValue.replace(/\D/g, "");
+      return numbers.length === 8;
+    }
+
+    return Boolean(stringValue && stringValue.trim());
   }
 
   function handleNext() {
@@ -177,7 +347,7 @@ export default function MultiStepForm({ token }: FormProps) {
       </div>
 
       {/* Header com indicador de etapa */}
-      
+
 
       {/* Renderiza apenas o step atual */}
       <div className="relative min-h-[280px]">
@@ -190,7 +360,7 @@ export default function MultiStepForm({ token }: FormProps) {
             <TextInput
               ref={inputRef as any}
               type="text"
-              value={formData[currentStep.name]}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
               onChange={(value) => handleChange(currentStep.name, value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && canProceed()) {
@@ -207,7 +377,7 @@ export default function MultiStepForm({ token }: FormProps) {
             <TextInput
               ref={inputRef as any}
               type="email"
-              value={formData[currentStep.name]}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
               onChange={(value) => handleChange(currentStep.name, value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && canProceed()) {
@@ -223,7 +393,7 @@ export default function MultiStepForm({ token }: FormProps) {
           {currentStep.type === "tel" && (
             <PhoneInput
               ref={inputRef as any}
-              value={formData[currentStep.name]}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
               onChange={(value) => handleChange(currentStep.name, value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && canProceed()) {
@@ -238,7 +408,7 @@ export default function MultiStepForm({ token }: FormProps) {
           {currentStep.type === "currency" && (
             <CurrencyInput
               ref={inputRef as any}
-              value={formData[currentStep.name]}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
               onChange={(value) => handleChange(currentStep.name, value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && canProceed()) {
@@ -256,7 +426,7 @@ export default function MultiStepForm({ token }: FormProps) {
               rows={4}
               placeholder="Opcional..."
               className="w-full rounded-lg bg-brand-dark-bg-chumbo px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none transition-all resize-none shadow-[2px_2px_8px_rgba(0,0,0,0.3)]"
-              value={formData[currentStep.name]}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
               onChange={(e) => handleChange(currentStep.name, e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Tab") {
@@ -264,6 +434,36 @@ export default function MultiStepForm({ token }: FormProps) {
                   handleNext();
                 }
               }}
+            />
+          )}
+
+          {currentStep.type === "cpf" && (
+            <CPFInput
+              ref={inputRef as any}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
+              onChange={(value) => handleChange(currentStep.name, value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canProceed()) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
+              placeholder={currentStep.placeholder}
+            />
+          )}
+
+          {currentStep.type === "cep" && (
+            <CEPInput
+              ref={inputRef as any}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
+              onChange={(value) => handleChange(currentStep.name, value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canProceed()) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
+              placeholder={currentStep.placeholder}
             />
           )}
 
