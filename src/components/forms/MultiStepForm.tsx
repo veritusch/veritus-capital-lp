@@ -7,12 +7,13 @@ import CurrencyInput from "./inputs/CurrencyInput";
 import TextInput from "./inputs/TextInput";
 import CPFInput from "./inputs/CPFInput";
 import CEPInput from "./inputs/CEPInput";
+import DateInput from "./inputs/DateInput";
 
 interface FormProps {
   token: string;
 }
 
-type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep";
+type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep" | "date";
 
 interface Step {
   name: keyof FormData;
@@ -35,8 +36,8 @@ interface FormData {
   cep: string;
   cidade: string;
   estado: string;
-  dataInicioContrato: Date;
-  dataNascimentoCliente?: Date;
+  dataInicioContrato: string;
+  dataNascimentoCliente?: string;
   valorInvestimento: string;
   chavePixCliente: string;
   nomeHerdeiro1?: string;
@@ -78,8 +79,8 @@ export default function MultiStepForm({ token }: FormProps) {
     cep: "",
     cidade: "",
     estado: "",
-    dataInicioContrato: new Date(),
-    dataNascimentoCliente: new Date(),
+    dataInicioContrato: "",
+    dataNascimentoCliente: "",
     chavePixCliente: "",
     nomeTerceiro: "",
     cpfTerceiro: "",
@@ -103,7 +104,7 @@ export default function MultiStepForm({ token }: FormProps) {
     {
       name: "dataNascimentoCliente",
       label: "Qual é a sua data de nascimento?",
-      type: "text",
+      type: "date",
       placeholder: "DD/MM/AAAA",
       required: true,
     },
@@ -199,7 +200,7 @@ export default function MultiStepForm({ token }: FormProps) {
     {
       name: "dataInicioContrato",
       label: "Qual é a data de início do contrato?",
-      type: "text",
+      type: "date",
       placeholder: "DD/MM/AAAA",
       required: true,
     },
@@ -304,6 +305,22 @@ export default function MultiStepForm({ token }: FormProps) {
       // CEP precisa ter exatamente 8 dígitos
       const numbers = stringValue.replace(/\D/g, "");
       return numbers.length === 8;
+    }
+
+    if (currentStep.type === "date") {
+      // Data precisa estar no formato DD/MM/AAAA
+      const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+      if (!dateRegex.test(stringValue)) return false;
+      
+      // Valida se é uma data válida
+      const [day, month, year] = stringValue.split("/").map(Number);
+      const date = new Date(year, month - 1, day);
+      
+      return (
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+      );
     }
 
     return Boolean(stringValue && stringValue.trim());
@@ -464,6 +481,22 @@ export default function MultiStepForm({ token }: FormProps) {
                 }
               }}
               placeholder={currentStep.placeholder}
+            />
+          )}
+
+          {currentStep.type === "date" && (
+            <DateInput
+              ref={inputRef as any}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
+              onChange={(value) => handleChange(currentStep.name, value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canProceed()) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
+              placeholder={currentStep.placeholder}
+              maxDate={currentStep.name === "dataNascimentoCliente" ? new Date().toISOString().split('T')[0] : undefined}
             />
           )}
 
