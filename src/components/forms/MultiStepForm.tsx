@@ -750,9 +750,10 @@ export default function MultiStepForm({ token }: FormProps) {
         body: JSON.stringify(flatPayload),
       });
 
-      if (!res.ok) throw new Error("Erro ao enviar para Airtable");
+      if (res.status === 200 || res.status === 201) {
+        setSubmitStatus("success");
+      }
 
-      setSubmitStatus("success");
     } catch (err) {
       console.error(err);
       setSubmitStatus("error");
