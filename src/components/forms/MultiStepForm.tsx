@@ -10,6 +10,7 @@ import CPFInput from "./inputs/CPFInput";
 import CEPInput from "./inputs/CEPInput";
 import DateInput from "./inputs/DateInput";
 import RGInput from "./inputs/RGInput";
+import { generateId } from "@/src/utils/uuid";
 
 interface FormProps {
   token: string;
@@ -27,6 +28,7 @@ interface Step {
 }
 
 interface FormData {
+  id: string;
   nome: string;
   email: string;
   telefone: string;
@@ -74,6 +76,7 @@ export default function MultiStepForm({ token }: FormProps) {
     useState<"idle" | "success" | "error">("idle");
 
   const [formData, setFormData] = useState<FormData>({
+    id: generateId(),
     nome: "",
     email: "",
     telefone: "",
@@ -574,6 +577,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
   function preparePayload(data: FormData) {
     return {
+      id: data.id,
       cliente: {
         nome: capitalize(cleanText(data.nome)),
         email: cleanText(data.email).toLowerCase(),
