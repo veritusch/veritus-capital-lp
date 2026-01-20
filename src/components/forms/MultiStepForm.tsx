@@ -343,7 +343,7 @@ export default function MultiStepForm({ token }: FormProps) {
     // Adiciona pergunta sobre depósito em conta de terceiro
     baseSteps.push({
       name: "desejaDepositoTerceiro",
-      label: "Você deseja que os rendimentos mensais sejam depositados em contas de terceiro?",
+      label: "Deseja que os rendimentos mensais sejam depositados em conta de terceiros?",
       type: "select",
       required: true,
       options: [
@@ -524,6 +524,104 @@ export default function MultiStepForm({ token }: FormProps) {
     return Boolean(stringValue && stringValue.trim());
   }
 
+  // ================= UTILITÁRIOS DE FORMATAÇÃO =================
+
+  const capitalize = (text = "") =>
+    text
+      .toString()
+      .toLowerCase()
+      .split(" ")
+      .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+      .join(" ");
+
+  const cleanText = (text: any = "") =>
+    text
+      ?.toString()
+      .trim()
+      .replace(/\s+/g, " ") || "";
+
+
+  function buildHerdeiros(data: FormData) {
+    const total = parseInt(data.quantidadeHerdeiros || "0");
+
+    return Array.from({ length: total }).map((_, i) => {
+      const n = i + 1;
+
+      return {
+        nome: capitalize(cleanText(data[`nomeHerdeiro${n}` as keyof FormData] as string)),
+        cpf: data[`cpfHerdeiro${n}` as keyof FormData],
+        rg: data[`rgHerdeiro${n}` as keyof FormData],
+        parentesco: capitalize(cleanText(data[`grauParentescoHerdeiro${n}` as keyof FormData] as string)),
+      };
+    });
+  }
+
+  function preparePayload(data: FormData) {
+    return {
+      cliente: {
+        nome: capitalize(cleanText(data.nome)),
+        email: cleanText(data.email).toLowerCase(),
+        telefone: data.telefone,
+        cpf: data.cpf,
+        dataNascimentoCliente: data.dataNascimentoCliente,
+      },
+
+      endereco: {
+        logradouro: capitalize(cleanText(data.logradouro)),
+        numeroResidencia: data.numeroResidencia
+          ? Number(data.numeroResidencia)
+          : "",
+        complemento: capitalize(cleanText(data.complemento || "")),
+        bairro: capitalize(cleanText(data.bairro)),
+        cep: data.cep,
+        cidade: capitalize(cleanText(data.cidade)),
+        estado: capitalize(cleanText(data.estado)),
+      },
+
+      investimento: {
+        valorInvestimento: data.valorInvestimento,
+        dataInicioContrato: data.dataInicioContrato,
+
+        // ✅ REGRA OFICIAL DO CONTRATO
+        pixCliente:
+          data.chavePixCliente?.trim()
+            ? cleanText(data.chavePixCliente)
+            : "Não informada pelo Contratante",
+      },
+
+      herdeiros:
+        data.desejaAdicionarHerdeiros === "Sim"
+          ? buildHerdeiros(data)
+          : [],
+
+      terceiro:
+        data.desejaDepositoTerceiro === "Sim"
+          ? {
+            nome: capitalize(cleanText(data.nomeTerceiro)),
+            cpf: data.cpfTerceiro,
+
+            banco: capitalize(cleanText(data.nomeBancoTerceiro)),
+            agencia: cleanText(data.agenciaTerceiro),
+            conta: cleanText(data.contaTerceiro),
+
+            // ✅ regra jurídica correta
+            pix:
+              data.chavePixTerceiro?.trim()
+                ? cleanText(data.chavePixTerceiro)
+                : "Não informada",
+          }
+          : null,
+
+      meta: {
+        desejaHerdeiros: data.desejaAdicionarHerdeiros,
+        depositoTerceiro: data.desejaDepositoTerceiro,
+      },
+    };
+  }
+
+  // ================= FIM UTILITÁRIOS DE FORMATAÇÃO =================
+
+
   function handleNext() {
     if (!canProceed()) return;
     setStep((prev) => prev + 1);
@@ -539,7 +637,14 @@ export default function MultiStepForm({ token }: FormProps) {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Dados enviados:", { ...formData, token });
+
+      const payload = {
+        ...preparePayload(formData),
+        token,
+      };
+
+      console.log("Objeto do Forms Completo", payload);
+
       setSubmitStatus("success");
     } catch {
       setSubmitStatus("error");
@@ -547,6 +652,7 @@ export default function MultiStepForm({ token }: FormProps) {
       setIsSubmitting(false);
     }
   }
+
 
   return (
     <div className="mx-auto max-w-xl w-full px-4">
