@@ -579,7 +579,7 @@ export default function MultiStepForm({ token }: FormProps) {
         email: cleanText(data.email).toLowerCase(),
         telefone: data.telefone,
         cpf: data.cpf,
-        dataNascimentoCliente: data.dataNascimentoCliente,
+        dataNascimento: data.dataNascimentoCliente,
       },
 
       endereco: {
