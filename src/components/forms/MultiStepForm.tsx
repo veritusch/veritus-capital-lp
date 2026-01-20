@@ -5,15 +5,17 @@ import Image from "next/image";
 import PhoneInput from "./inputs/PhoneInput";
 import CurrencyInput from "./inputs/CurrencyInput";
 import TextInput from "./inputs/TextInput";
+import NumberInput from "./inputs/NumberInput";
 import CPFInput from "./inputs/CPFInput";
 import CEPInput from "./inputs/CEPInput";
 import DateInput from "./inputs/DateInput";
+import RGInput from "./inputs/RGInput";
 
 interface FormProps {
   token: string;
 }
 
-type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep" | "date";
+type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep" | "date" | "rg" | "number";
 
 interface Step {
   name: keyof FormData;
@@ -143,7 +145,7 @@ export default function MultiStepForm({ token }: FormProps) {
       {
         name: "numeroResidencia",
         label: "Informe o número da sua residência?",
-        type: "text"
+        type: "number"
       },
       {
         name: "complemento",
@@ -264,7 +266,7 @@ export default function MultiStepForm({ token }: FormProps) {
           {
             name: "rgHerdeiro1",
             label: "Informe o RG do 1º herdeiro?",
-            type: "text",
+            type: "rg",
             required: true,
           },
           {
@@ -295,7 +297,7 @@ export default function MultiStepForm({ token }: FormProps) {
           {
             name: "rgHerdeiro2",
             label: "Informe o RG do 2º herdeiro?",
-            type: "text",
+            type: "rg",
             required: true,
           },
           {
@@ -326,7 +328,7 @@ export default function MultiStepForm({ token }: FormProps) {
           {
             name: "rgHerdeiro3",
             label: "Informe o RG do 3º herdeiro?",
-            type: "text",
+            type: "rg",
             required: true,
           },
           {
@@ -498,6 +500,20 @@ export default function MultiStepForm({ token }: FormProps) {
       if (numbers.length !== 11) return false;
       return validateCPF(stringValue);
     }
+
+    if (currentStep.type === "rg") {
+      const limpo = stringValue.trim();
+
+      if (limpo.length < 5) return false;
+      if (limpo.length > 14) return false;
+
+      if (!/^[a-zA-Z0-9]+$/.test(limpo)) return false;
+
+      if (/^([a-zA-Z0-9])\1+$/.test(limpo)) return false;
+
+      return true;
+    }
+
 
     if (currentStep.type === "cep") {
       // CEP precisa ter exatamente 8 dígitos
@@ -692,6 +708,25 @@ export default function MultiStepForm({ token }: FormProps) {
             />
           )}
 
+          {currentStep.type === "number" && (
+            <NumberInput
+              ref={inputRef as any}
+              value={
+                typeof formData[currentStep.name] === "string"
+                  ? formData[currentStep.name] as string
+                  : ""
+              }
+              onChange={(value) => handleChange(currentStep.name, value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canProceed()) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
+              placeholder={currentStep.placeholder}
+            />
+          )}
+
           {currentStep.type === "email" && (
             <TextInput
               ref={inputRef as any}
@@ -770,6 +805,26 @@ export default function MultiStepForm({ token }: FormProps) {
               placeholder={currentStep.placeholder}
             />
           )}
+
+          {currentStep.type === "rg" && (
+            <RGInput
+              ref={inputRef as any}
+              value={
+                typeof formData[currentStep.name] === "string"
+                  ? (formData[currentStep.name] as string)
+                  : ""
+              }
+              onChange={(value) => handleChange(currentStep.name, value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canProceed()) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
+              placeholder={currentStep.placeholder}
+            />
+          )}
+
 
           {currentStep.type === "cep" && (
             <CEPInput
