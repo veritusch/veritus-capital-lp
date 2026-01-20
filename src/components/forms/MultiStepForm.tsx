@@ -576,6 +576,11 @@ export default function MultiStepForm({ token }: FormProps) {
   }
 
   function preparePayload(data: FormData) {
+    // Extrair o dia de dataInicioContrato (formato DD/MM/AAAA)
+    const diaPagamento = data.dataInicioContrato ? data.dataInicioContrato.split("/")[0] : "";
+    const anoAtual = new Date().getFullYear();
+    const now = new Date().toISOString();
+
     return {
       id: data.id,
       cliente: {
@@ -601,6 +606,7 @@ export default function MultiStepForm({ token }: FormProps) {
       investimento: {
         valorInvestimento: data.valorInvestimento,
         dataInicioContrato: data.dataInicioContrato,
+        diaPagamento: diaPagamento,
 
         // ✅ REGRA OFICIAL DO CONTRATO
         pixCliente:
@@ -608,6 +614,8 @@ export default function MultiStepForm({ token }: FormProps) {
             ? cleanText(data.chavePixCliente)
             : "Não informada pelo Contratante",
       },
+      data_cadastro: now,
+      ano_atual: anoAtual,
 
       herdeiros:
         data.desejaAdicionarHerdeiros === "Sim"
@@ -639,6 +647,81 @@ export default function MultiStepForm({ token }: FormProps) {
     };
   }
 
+  function formatDateToISO(dateStr: string) {
+    // espera DD/MM/YYYY
+    const [day, month, year] = dateStr.split("/");
+    if (!day || !month || !year) return "";
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
+  function flattenPayload(payload: ReturnType<typeof preparePayload>) {
+
+    const flat: Record<string, any> = {
+      id: payload.id,
+      cliente_nome: payload.cliente.nome || "",
+      cliente_email: payload.cliente.email || "",
+      cliente_telefone: payload.cliente.telefone || "",
+      cliente_cpf: payload.cliente.cpf || "",
+      cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
+
+      endereco_logradouro: payload.endereco.logradouro || "",
+      endereco_numeroResidencia: payload.endereco.numeroResidencia || "",
+      endereco_complemento: payload.endereco.complemento || "",
+      endereco_bairro: payload.endereco.bairro || "",
+      endereco_cep: payload.endereco.cep || "",
+      endereco_cidade: payload.endereco.cidade || "",
+      endereco_estado: payload.endereco.estado || "",
+
+      investimento_valorInvestimento: payload.investimento.valorInvestimento || "",
+      investimento_dataInicioContrato: formatDateToISO(payload.investimento.dataInicioContrato || ""),
+      investimento_diaPagamento: Number(payload.investimento.diaPagamento || 0),
+      investimento_pixCliente: payload.investimento.pixCliente || "",
+
+      meta_desejaHerdeiros: payload.meta.desejaHerdeiros || "",
+      meta_depositoTerceiro: payload.meta.depositoTerceiro || "",
+
+      token: token || "",
+      ano_atual: payload.ano_atual ? String(payload.ano_atual) : "",
+      data_cadastro: payload.data_cadastro || "",
+      status_contrato: "Em análise",
+    };
+
+    // Herdeiros (até 3)
+    payload.herdeiros.forEach((h, i) => {
+      const idx = i + 1;
+      flat[`herdeiro${idx}_nome`] = h.nome || "";
+      flat[`herdeiro${idx}_cpf`] = h.cpf || "";
+      flat[`herdeiro${idx}_rg`] = h.rg || "";
+      flat[`herdeiro${idx}_parentesco`] = h.parentesco || "";
+    });
+
+    // Preencher colunas vazias se tiver menos de 3 herdeiros
+    for (let i = payload.herdeiros.length + 1; i <= 3; i++) {
+      flat[`herdeiro${i}_nome`] = "";
+      flat[`herdeiro${i}_cpf`] = "";
+      flat[`herdeiro${i}_rg`] = "";
+      flat[`herdeiro${i}_parentesco`] = "";
+    }
+
+    // Terceiro
+    if (payload.terceiro) {
+      flat["terceiro_nome"] = payload.terceiro.nome || "";
+      flat["terceiro_cpf"] = payload.terceiro.cpf || "";
+      flat["terceiro_banco"] = payload.terceiro.banco || "";
+      flat["terceiro_agencia"] = payload.terceiro.agencia || "";
+      flat["terceiro_conta"] = payload.terceiro.conta || "";
+      flat["terceiro_pix"] = payload.terceiro.pix || "";
+    } else {
+      flat["terceiro_nome"] = "";
+      flat["terceiro_cpf"] = "";
+      flat["terceiro_banco"] = "";
+      flat["terceiro_agencia"] = "";
+      flat["terceiro_conta"] = "";
+      flat["terceiro_pix"] = "";
+    }
+
+    return flat;
+  }
   // ================= FIM UTILITÁRIOS DE FORMATAÇÃO =================
 
 
@@ -656,22 +739,28 @@ export default function MultiStepForm({ token }: FormProps) {
     setSubmitStatus("idle");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const payload = preparePayload(formData);
+      const flatPayload = flattenPayload(payload);
 
-      const payload = {
-        ...preparePayload(formData),
-        token,
-      };
+      console.log("Flat payload para Airtable:", flatPayload);
 
-      console.log("Objeto do Forms Completo", payload);
+      const res = await fetch("/api/airtable", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(flatPayload),
+      });
+
+      if (!res.ok) throw new Error("Erro ao enviar para Airtable");
 
       setSubmitStatus("success");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
     }
   }
+
 
 
   return (
