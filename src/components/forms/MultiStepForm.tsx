@@ -683,7 +683,7 @@ export default function MultiStepForm({ token }: FormProps) {
       token: token || "",
       ano_atual: payload.ano_atual ? String(payload.ano_atual) : "",
       data_cadastro: payload.data_cadastro || "",
-      status_contrato: "Em análise",
+      status_contrato: "Cadastro Recebido",
     };
 
     // Herdeiros (até 3)
