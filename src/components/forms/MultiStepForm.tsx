@@ -609,7 +609,7 @@ export default function MultiStepForm({ token }: FormProps) {
         diaPagamento: diaPagamento,
 
         // ✅ REGRA OFICIAL DO CONTRATO
-        pixCliente:
+        chavePixCliente:
           data.chavePixCliente?.trim()
             ? cleanText(data.chavePixCliente)
             : "Não informada pelo Contratante",
@@ -633,7 +633,7 @@ export default function MultiStepForm({ token }: FormProps) {
             conta: cleanText(data.contaTerceiro),
 
             // ✅ regra jurídica correta
-            pix:
+            chavePix:
               data.chavePixTerceiro?.trim()
                 ? cleanText(data.chavePixTerceiro)
                 : "Não informada",
@@ -664,18 +664,18 @@ export default function MultiStepForm({ token }: FormProps) {
       cliente_cpf: payload.cliente.cpf || "",
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
-      endereco_logradouro: payload.endereco.logradouro || "",
-      endereco_numeroResidencia: payload.endereco.numeroResidencia || "",
-      endereco_complemento: payload.endereco.complemento || "",
-      endereco_bairro: payload.endereco.bairro || "",
-      endereco_cep: payload.endereco.cep || "",
-      endereco_cidade: payload.endereco.cidade || "",
-      endereco_estado: payload.endereco.estado || "",
+      logradouro: payload.endereco.logradouro || "",
+      numero_residencia: payload.endereco.numeroResidencia || "",
+      complemento: payload.endereco.complemento || "",
+      bairro: payload.endereco.bairro || "",
+      cep: payload.endereco.cep || "",
+      cidade: payload.endereco.cidade || "",
+      estado: payload.endereco.estado || "",
 
-      investimento_valorInvestimento: payload.investimento.valorInvestimento || "",
-      investimento_dataInicioContrato: formatDateToISO(payload.investimento.dataInicioContrato || ""),
-      investimento_diaPagamento: Number(payload.investimento.diaPagamento || 0),
-      investimento_pixCliente: payload.investimento.pixCliente || "",
+      valor_investimento: payload.investimento.valorInvestimento || "",
+      data_inicio_contrato: formatDateToISO(payload.investimento.dataInicioContrato || ""),
+      dia_pagamento: Number(payload.investimento.diaPagamento || 0),
+      cliente_chavePix: payload.investimento.chavePixCliente || "",
 
       meta_desejaHerdeiros: payload.meta.desejaHerdeiros || "",
       meta_depositoTerceiro: payload.meta.depositoTerceiro || "",
@@ -710,14 +710,14 @@ export default function MultiStepForm({ token }: FormProps) {
       flat["terceiro_banco"] = payload.terceiro.banco || "";
       flat["terceiro_agencia"] = payload.terceiro.agencia || "";
       flat["terceiro_conta"] = payload.terceiro.conta || "";
-      flat["terceiro_pix"] = payload.terceiro.pix || "";
+      flat["terceiro_chavePix"] = payload.terceiro.chavePix || "";
     } else {
       flat["terceiro_nome"] = "";
       flat["terceiro_cpf"] = "";
       flat["terceiro_banco"] = "";
       flat["terceiro_agencia"] = "";
       flat["terceiro_conta"] = "";
-      flat["terceiro_pix"] = "";
+      flat["terceiro_chavePix"] = "";
     }
 
     return flat;
