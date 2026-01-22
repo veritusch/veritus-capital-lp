@@ -67,6 +67,7 @@ interface FormData {
   agenciaTerceiro: string;
   contaTerceiro: string;
   chavePixTerceiro: string;
+  aceiteLGPD?: string;
 }
 
 const SELECT_TRANSITION_DELAY_MS = 250;
@@ -103,6 +104,7 @@ export default function MultiStepForm({ token }: FormProps) {
     agenciaTerceiro: "",
     contaTerceiro: "",
     chavePixTerceiro: "",
+    aceiteLGPD: "",
   });
 
   const inputRef = useRef<
@@ -701,6 +703,7 @@ export default function MultiStepForm({ token }: FormProps) {
       meta: {
         desejaHerdeiros: data.desejaAdicionarHerdeiros,
         depositoTerceiro: data.desejaDepositoTerceiro,
+        aceiteLGPD: data.aceiteLGPD === "Sim",
       },
     };
   }
@@ -755,6 +758,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
       meta_desejaHerdeiros: payload.meta.desejaHerdeiros || "",
       meta_depositoTerceiro: payload.meta.depositoTerceiro || "",
+      aceite_lgpd: payload.meta.aceiteLGPD ? "Sim" : "Não",
 
       token: token || "",
       ano_atual: payload.anoAtual ? String(payload.anoAtual) : "",
@@ -1062,6 +1066,23 @@ export default function MultiStepForm({ token }: FormProps) {
         </div>
       </div>
 
+      {/* Checkbox de aceite LGPD - aparece apenas na última tela */}
+      {step === steps.length - 1 && (
+        <div className="mt-4">
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={formData.aceiteLGPD === "Sim"}
+              onChange={(e) => handleChange("aceiteLGPD", e.target.checked ? "Sim" : "Não")}
+              className="mt-1 w-5 h-5 rounded border-brand-text-light/30 bg-brand-dark-bg-chumbo focus:ring-2 focus:ring-brand-text-light/20 cursor-pointer accent-brand-golden"
+            />
+            <span className="typography-helvetica text-sm text-brand-text-light/80 group-hover:text-brand-text-light transition-colors">
+              Li e concordo com os termos de uso e autorizo a Veritus Capital Holding a utilizar meus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD).
+            </span>
+          </label>
+        </div>
+      )}
+
       {/* Actions */}
       <div className="mt-8 flex items-center justify-between gap-4">
         {step > 0 ? (
@@ -1104,7 +1125,7 @@ export default function MultiStepForm({ token }: FormProps) {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || formData.aceiteLGPD !== "Sim"}
             tabIndex={0}
             className="bg-brand-brown text-brand-light h-[45px] px-8 rounded-[28px] typography-helvetica-bold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
