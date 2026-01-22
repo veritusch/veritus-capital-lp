@@ -29,9 +29,11 @@ interface Step {
 
 interface FormData {
   id: string;
-  nome: string;
+  nomeCompleto: string;
   email: string;
   telefone: string;
+  telefoneEhWhatsapp?: string;
+  numeroWhatsapp?: string;
   cpf: string;
   logradouro: string;
   numeroResidencia?: string;
@@ -77,9 +79,11 @@ export default function MultiStepForm({ token }: FormProps) {
 
   const [formData, setFormData] = useState<FormData>({
     id: generateId(),
-    nome: "",
+    nomeCompleto: "",
     email: "",
     telefone: "",
+    telefoneEhWhatsapp: "",
+    numeroWhatsapp: "",
     cpf: "",
     logradouro: "",
     valorInvestimento: "",
@@ -108,7 +112,7 @@ export default function MultiStepForm({ token }: FormProps) {
   const steps: Step[] = useMemo(() => {
     const baseSteps: Step[] = [
       {
-        name: "nome",
+        name: "nomeCompleto",
         label: "Qual é o seu nome completo?",
         type: "text",
         required: true,
@@ -133,99 +137,8 @@ export default function MultiStepForm({ token }: FormProps) {
         required: true,
       },
       {
-        name: "cpf",
-        label: "Informe seu CPF?",
-        type: "cpf",
-        required: true,
-      },
-      {
-        name: "logradouro",
-        label: "Informe seu logradouro?",
-        type: "text",
-        placeholder: "(Rua, Avenida, etc)",
-        required: true,
-      },
-      {
-        name: "numeroResidencia",
-        label: "Informe o número da sua residência?",
-        type: "number"
-      },
-      {
-        name: "complemento",
-        label: "Informe o seu Complemento",
-        type: "text",
-        placeholder: "(Apto, Bloco, Casa, etc.)"
-      },
-      {
-        name: "bairro",
-        label: "Informe o seu bairro?",
-        type: "text",
-        required: true,
-      },
-      {
-        name: "cep",
-        label: "Informe o seu CEP?",
-        type: "cep",
-        required: true,
-      },
-      {
-        name: "cidade",
-        label: "Informe a sua cidade?",
-        type: "text",
-        required: true,
-      },
-      {
-        name: "estado",
-        label: "Informe o seu estado?",
-        type: "select",
-        required: true,
-        options: [
-          { label: "Acre", value: "Acre" },
-          { label: "Alagoas", value: "Alagoas" },
-          { label: "Amapá", value: "Amapá" },
-          { label: "Amazonas", value: "Amazonas" },
-          { label: "Bahia", value: "Bahia" },
-          { label: "Ceará", value: "Ceará" },
-          { label: "Distrito Federal", value: "Distrito Federal" },
-          { label: "Espírito Santo", value: "Espírito Santo" },
-          { label: "Goiás", value: "Goiás" },
-          { label: "Maranhão", value: "Maranhão" },
-          { label: "Mato Grosso", value: "Mato Grosso" },
-          { label: "Mato Grosso do Sul", value: "Mato Grosso do Sul" },
-          { label: "Minas Gerais", value: "Minas Gerais" },
-          { label: "Pará", value: "Pará" },
-          { label: "Paraíba", value: "Paraíba" },
-          { label: "Paraná", value: "Paraná" },
-          { label: "Pernambuco", value: "Pernambuco" },
-          { label: "Piauí", value: "Piauí" },
-          { label: "Rio de Janeiro", value: "Rio de Janeiro" },
-          { label: "Rio Grande do Norte", value: "Rio Grande do Norte" },
-          { label: "Rio Grande do Sul", value: "Rio Grande do Sul" },
-          { label: "Rondônia", value: "Rondônia" },
-          { label: "Roraima", value: "Roraima" },
-          { label: "Santa Catarina", value: "Santa Catarina" },
-          { label: "São Paulo", value: "São Paulo" },
-          { label: "Sergipe", value: "Sergipe" },
-          { label: "Tocantins", value: "Tocantins" },
-        ],
-      },
-      {
-        name: "dataInicioContrato",
-        label: "Qual é a data de início do contrato?",
-        type: "date",
-        placeholder: "DD/MM/AAAA",
-        required: true,
-      },
-      {
-        name: "valorInvestimento",
-        label: "Qual valor pretende investir?",
-        type: "currency",
-        placeholder: "R$ 100.000,00",
-        required: true,
-      },
-      {
-        name: "desejaAdicionarHerdeiros",
-        label: "Deseja adicionar Herdeiros ao contrato?",
+        name: "telefoneEhWhatsapp",
+        label: "Este telefone é WhatsApp?",
         type: "select",
         required: true,
         options: [
@@ -234,6 +147,129 @@ export default function MultiStepForm({ token }: FormProps) {
         ],
       },
     ];
+
+    // Adiciona campo para número do WhatsApp se o telefone não for WhatsApp
+    if (formData.telefoneEhWhatsapp === "Não") {
+      baseSteps.push({
+        name: "numeroWhatsapp",
+        label: "Informe seu número de WhatsApp?",
+        type: "tel",
+        required: true,
+      });
+    }
+
+    baseSteps.push({
+      name: "cpf",
+      label: "Informe seu CPF?",
+      type: "cpf",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "logradouro",
+      label: "Informe seu logradouro?",
+      type: "text",
+      placeholder: "(Rua, Avenida, etc)",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "numeroResidencia",
+      label: "Informe o número da sua residência?",
+      type: "number"
+    });
+
+    baseSteps.push({
+      name: "complemento",
+      label: "Informe o seu Complemento",
+      type: "text",
+      placeholder: "(Apto, Bloco, Casa, etc.)"
+    });
+
+    baseSteps.push({
+      name: "bairro",
+      label: "Informe o seu bairro?",
+      type: "text",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "cep",
+      label: "Informe o seu CEP?",
+      type: "cep",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "cidade",
+      label: "Informe a sua cidade?",
+      type: "text",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "estado",
+      label: "Informe o seu estado?",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Acre", value: "Acre" },
+        { label: "Alagoas", value: "Alagoas" },
+        { label: "Amapá", value: "Amapá" },
+        { label: "Amazonas", value: "Amazonas" },
+        { label: "Bahia", value: "Bahia" },
+        { label: "Ceará", value: "Ceará" },
+        { label: "Distrito Federal", value: "Distrito Federal" },
+        { label: "Espírito Santo", value: "Espírito Santo" },
+        { label: "Goiás", value: "Goiás" },
+        { label: "Maranhão", value: "Maranhão" },
+        { label: "Mato Grosso", value: "Mato Grosso" },
+        { label: "Mato Grosso do Sul", value: "Mato Grosso do Sul" },
+        { label: "Minas Gerais", value: "Minas Gerais" },
+        { label: "Pará", value: "Pará" },
+        { label: "Paraíba", value: "Paraíba" },
+        { label: "Paraná", value: "Paraná" },
+        { label: "Pernambuco", value: "Pernambuco" },
+        { label: "Piauí", value: "Piauí" },
+        { label: "Rio de Janeiro", value: "Rio de Janeiro" },
+        { label: "Rio Grande do Norte", value: "Rio Grande do Norte" },
+        { label: "Rio Grande do Sul", value: "Rio Grande do Sul" },
+        { label: "Rondônia", value: "Rondônia" },
+        { label: "Roraima", value: "Roraima" },
+        { label: "Santa Catarina", value: "Santa Catarina" },
+        { label: "São Paulo", value: "São Paulo" },
+        { label: "Sergipe", value: "Sergipe" },
+        { label: "Tocantins", value: "Tocantins" },
+      ],
+    });
+
+    baseSteps.push({
+      name: "dataInicioContrato",
+      label: "Qual é a data de início do contrato?",
+      type: "date",
+      placeholder: "DD/MM/AAAA",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "valorInvestimento",
+      label: "Qual valor pretende investir?",
+      type: "currency",
+      placeholder: "R$ 100.000,00",
+      required: true,
+    });
+
+    baseSteps.push({
+      name: "desejaAdicionarHerdeiros",
+      label: "Deseja adicionar Herdeiros ao contrato?",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Sim", value: "Sim" },
+        { label: "Não", value: "Não" },
+      ],
+    });
+    
 
     // Adiciona pergunta sobre quantidade de herdeiros se a resposta for "Sim"
     if (formData.desejaAdicionarHerdeiros === "Sim") {
@@ -412,7 +448,7 @@ export default function MultiStepForm({ token }: FormProps) {
     }
 
     return baseSteps;
-  }, [formData.desejaAdicionarHerdeiros, formData.quantidadeHerdeiros, formData.desejaDepositoTerceiro]);
+  }, [formData.desejaAdicionarHerdeiros, formData.quantidadeHerdeiros, formData.desejaDepositoTerceiro, formData.telefoneEhWhatsapp]);
 
   const currentStep = steps[step] ?? steps[steps.length - 1];
 
@@ -559,6 +595,26 @@ export default function MultiStepForm({ token }: FormProps) {
       .trim()
       .replace(/\s+/g, " ") || "";
 
+  const getFirstName = (fullName: string) => {
+    const cleaned = cleanText(fullName);
+    if (!cleaned) return "";
+    return capitalize(cleaned.split(" ")[0]);
+  };
+
+  const formatToInternational = (phoneNumber: string) => {
+    // Remove toda formatação (parênteses, traços, espaços)
+    const cleaned = phoneNumber.replace(/\D/g, "");
+    if (!cleaned) return "";
+    
+    // Se já começa com 55, retorna com +
+    if (cleaned.startsWith("55")) {
+      return `+${cleaned}`;
+    }
+    
+    // Adiciona +55 (código do Brasil)
+    return `+55${cleaned}`;
+  };
+
 
   function buildHerdeiros(data: FormData) {
     const total = parseInt(data.quantidadeHerdeiros || "0");
@@ -584,9 +640,11 @@ export default function MultiStepForm({ token }: FormProps) {
     return {
       id: data.id,
       cliente: {
-        nome: capitalize(cleanText(data.nome)),
+        nomeCompleto: capitalize(cleanText(data.nomeCompleto)),
         email: cleanText(data.email).toLowerCase(),
         telefone: data.telefone,
+        numeroWhatsapp: data.telefoneEhWhatsapp === "Sim" ? data.telefone : (data.numeroWhatsapp || ""),
+        telefoneEhWhatsapp: data.telefoneEhWhatsapp === "Sim",
         cpf: data.cpf,
         dataNascimento: data.dataNascimentoCliente,
       },
@@ -614,8 +672,8 @@ export default function MultiStepForm({ token }: FormProps) {
             ? cleanText(data.chavePixCliente)
             : "Não informada pelo Contratante",
       },
-      data_cadastro: now,
-      ano_atual: anoAtual,
+      dataCadastro: now,
+      anoAtual: anoAtual,
 
       herdeiros:
         data.desejaAdicionarHerdeiros === "Sim"
@@ -674,9 +732,11 @@ export default function MultiStepForm({ token }: FormProps) {
 
     const flat: Record<string, any> = {
       id: payload.id,
-      cliente_nome: payload.cliente.nome || "",
+      cliente_nomeCompleto: payload.cliente.nomeCompleto || "",
+      cliente_primeiroNome: getFirstName(payload.cliente.nomeCompleto || ""),
       cliente_email: payload.cliente.email || "",
       cliente_telefone: payload.cliente.telefone || "",
+      cliente_numeroWhatsapp: formatToInternational(payload.cliente.numeroWhatsapp || ""),
       cliente_cpf: payload.cliente.cpf || "",
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
@@ -697,8 +757,8 @@ export default function MultiStepForm({ token }: FormProps) {
       meta_depositoTerceiro: payload.meta.depositoTerceiro || "",
 
       token: token || "",
-      ano_atual: payload.ano_atual ? String(payload.ano_atual) : "",
-      data_cadastro: payload.data_cadastro || "",
+      ano_atual: payload.anoAtual ? String(payload.anoAtual) : "",
+      data_cadastro: payload.dataCadastro || "",
       status_contrato: "Cadastro Recebido",
     };
 
@@ -814,7 +874,7 @@ export default function MultiStepForm({ token }: FormProps) {
                 }
               }}
               placeholder={currentStep.placeholder}
-              autoComplete={currentStep.name === "nome" ? "name" : undefined}
+              autoComplete={currentStep.name === "nomeCompleto" ? "name" : undefined}
             />
           )}
 
