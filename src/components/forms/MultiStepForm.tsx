@@ -654,6 +654,22 @@ export default function MultiStepForm({ token }: FormProps) {
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   }
 
+  function formatDateToExtended(dateStr: string) {
+    // espera DD/MM/YYYY e retorna "DD de Mês de YYYY"
+    const [day, month, year] = dateStr.split("/");
+    if (!day || !month || !year) return "";
+    
+    const monthNames = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+    
+    const monthIndex = parseInt(month, 10) - 1;
+    const monthName = monthNames[monthIndex] || "";
+    
+    return `${parseInt(day, 10)} de ${monthName} de ${year}`;
+  }
+
   function flattenPayload(payload: ReturnType<typeof preparePayload>) {
 
     const flat: Record<string, any> = {
@@ -673,7 +689,7 @@ export default function MultiStepForm({ token }: FormProps) {
       estado: payload.endereco.estado || "",
 
       valor_investimento: payload.investimento.valorInvestimento || "",
-      data_inicio_contrato: formatDateToISO(payload.investimento.dataInicioContrato || ""),
+      data_inicio_contrato: formatDateToExtended(payload.investimento.dataInicioContrato || ""),
       dia_pagamento: Number(payload.investimento.diaPagamento || 0),
       cliente_chavePix: payload.investimento.chavePixCliente || "",
 
