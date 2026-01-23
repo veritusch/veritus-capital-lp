@@ -637,7 +637,17 @@ export default function MultiStepForm({ token }: FormProps) {
     // Extrair o dia de dataInicioContrato (formato DD/MM/AAAA)
     const diaPagamento = data.dataInicioContrato ? data.dataInicioContrato.split("/")[0] : "";
     const anoAtual = new Date().getFullYear();
-    const now = new Date().toISOString();
+    
+    // Formatar data no padrão DD/MM/YYYY HH:mm no timezone de São Paulo
+    const now = new Date().toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).replace(",", "");
 
     return {
       id: data.id,
@@ -744,7 +754,7 @@ export default function MultiStepForm({ token }: FormProps) {
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
       logradouro: payload.endereco.logradouro || "",
-      numero_residencia: payload.endereco.numeroResidencia || "",
+      numero_residencia: payload.endereco.numeroResidencia || 0,
       complemento: payload.endereco.complemento || "",
       bairro: payload.endereco.bairro || "",
       cep: payload.endereco.cep || "",
@@ -760,9 +770,9 @@ export default function MultiStepForm({ token }: FormProps) {
       meta_depositoTerceiro: payload.meta.depositoTerceiro || "",
       aceite_lgpd: payload.meta.aceiteLGPD ? "Sim" : "Não",
 
-      token: token || "",
+      token_forms: token || "",
       ano_atual: payload.anoAtual ? String(payload.anoAtual) : "",
-      data_cadastro: payload.dataCadastro || "",
+      data_criacao_registro: payload.dataCadastro || "",
       status_contrato: "Cadastro Recebido",
     };
 
@@ -822,16 +832,27 @@ export default function MultiStepForm({ token }: FormProps) {
       const payload = preparePayload(formData);
       const flatPayload = flattenPayload(payload);
 
-      console.log("Flat payload para Airtable:", flatPayload);
+      console.log("Payload para Make Webhook:", flatPayload);
 
-      const res = await fetch("/api/airtable", {
+      // URL do webhook do Make - coloque sua URL aqui ou em variável de ambiente
+      const webhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL || "";
+
+      if (!webhookUrl) {
+        console.error("URL do webhook não configurada");
+        setSubmitStatus("error");
+        return;
+      }
+
+      const res = await fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(flatPayload),
       });
 
-      if (res.status === 200 || res.status === 201) {
+      if (res.ok) {
         setSubmitStatus("success");
+      } else {
+        throw new Error(`Erro: ${res.status}`);
       }
 
     } catch (err) {
