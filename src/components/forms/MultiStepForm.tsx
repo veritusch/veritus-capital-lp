@@ -614,7 +614,7 @@ export default function MultiStepForm({ token }: FormProps) {
     }
     
     // Adiciona +55 (código do Brasil)
-    return `+55${cleaned}`;
+    return `55${cleaned}`;
   };
 
 
