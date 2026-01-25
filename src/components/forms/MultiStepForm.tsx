@@ -271,7 +271,7 @@ export default function MultiStepForm({ token }: FormProps) {
         { label: "Não", value: "Não" },
       ],
     });
-    
+
 
     // Adiciona pergunta sobre quantidade de herdeiros se a resposta for "Sim"
     if (formData.desejaAdicionarHerdeiros === "Sim") {
@@ -607,12 +607,12 @@ export default function MultiStepForm({ token }: FormProps) {
     // Remove toda formatação (parênteses, traços, espaços)
     const cleaned = phoneNumber.replace(/\D/g, "");
     if (!cleaned) return "";
-    
+
     // Se já começa com 55, retorna com +
     if (cleaned.startsWith("55")) {
       return `+${cleaned}`;
     }
-    
+
     // Adiciona +55 (código do Brasil)
     return `55${cleaned}`;
   };
@@ -637,7 +637,7 @@ export default function MultiStepForm({ token }: FormProps) {
     // Extrair o dia de dataInicioContrato (formato DD/MM/AAAA)
     const diaPagamento = data.dataInicioContrato ? data.dataInicioContrato.split("/")[0] : "";
     const anoAtual = new Date().getFullYear();
-    
+
     // Formatar data no padrão DD/MM/YYYY HH:mm no timezone de São Paulo
     const now = new Date().toLocaleString("pt-BR", {
       timeZone: "America/Sao_Paulo",
@@ -729,15 +729,15 @@ export default function MultiStepForm({ token }: FormProps) {
     // espera DD/MM/YYYY e retorna "DD de Mês de YYYY"
     const [day, month, year] = dateStr.split("/");
     if (!day || !month || !year) return "";
-    
+
     const monthNames = [
       "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
       "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ];
-    
+
     const monthIndex = parseInt(month, 10) - 1;
     const monthName = monthNames[monthIndex] || "";
-    
+
     return `${parseInt(day, 10)} de ${monthName} de ${year}`;
   }
 
@@ -832,29 +832,22 @@ export default function MultiStepForm({ token }: FormProps) {
       const payload = preparePayload(formData);
       const flatPayload = flattenPayload(payload);
 
-      console.log("Payload para Make Webhook:", flatPayload);
-
-      // URL do webhook do Make - coloque sua URL aqui ou em variável de ambiente
-      const webhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL || "";
-
-      if (!webhookUrl) {
-        console.error("URL do webhook não configurada");
-        setSubmitStatus("error");
-        return;
+      if (process.env.NODE_ENV !== "production") {
+        console.log("Payload:", flatPayload);
       }
 
-      const res = await fetch(webhookUrl, {
+      const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(flatPayload),
       });
 
-      if (res.ok) {
-        setSubmitStatus("success");
-      } else {
-        throw new Error(`Erro: ${res.status}`);
+      if (!res.ok) {
+        setSubmitStatus("error");
+        return;
       }
 
+      setSubmitStatus("success");
     } catch (err) {
       console.error(err);
       setSubmitStatus("error");
@@ -862,8 +855,6 @@ export default function MultiStepForm({ token }: FormProps) {
       setIsSubmitting(false);
     }
   }
-
-
 
   return (
     <div className="mx-auto max-w-xl w-full px-4">
