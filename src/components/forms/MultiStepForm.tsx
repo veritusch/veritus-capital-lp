@@ -603,21 +603,6 @@ export default function MultiStepForm({ token }: FormProps) {
     return capitalize(cleaned.split(" ")[0]);
   };
 
-  const formatToInternational = (phoneNumber: string) => {
-    // Remove toda formatação (parênteses, traços, espaços)
-    const cleaned = phoneNumber.replace(/\D/g, "");
-    if (!cleaned) return "";
-
-    // Se já começa com 55, retorna com +
-    if (cleaned.startsWith("55")) {
-      return `+${cleaned}`;
-    }
-
-    // Adiciona +55 (código do Brasil)
-    return `55${cleaned}`;
-  };
-
-
   function buildHerdeiros(data: FormData) {
     const total = parseInt(data.quantidadeHerdeiros || "0");
 
@@ -749,7 +734,7 @@ export default function MultiStepForm({ token }: FormProps) {
       cliente_primeiroNome: getFirstName(payload.cliente.nomeCompleto || ""),
       cliente_email: payload.cliente.email || "",
       cliente_telefone: payload.cliente.telefone || "",
-      cliente_numeroWhatsapp: formatToInternational(payload.cliente.numeroWhatsapp || ""),
+      cliente_numeroWhatsapp: (payload.cliente.numeroWhatsapp || "").replace(/\D/g, ""),
       cliente_cpf: payload.cliente.cpf || "",
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
