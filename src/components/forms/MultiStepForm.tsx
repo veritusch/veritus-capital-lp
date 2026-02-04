@@ -726,7 +726,25 @@ export default function MultiStepForm({ token }: FormProps) {
     return `${parseInt(day, 10)} de ${monthName} de ${year}`;
   }
 
+  function currencyToNumber(currencyStr: string): number {
+    // Remove "R$", espaços, pontos de milhares e substitui vírgula por ponto
+    const numStr = currencyStr.replace(/R\$\s?/g, "").replace(/\./g, "").replace(",", ".");
+    return parseFloat(numStr) || 0;
+  }
+
+  function numberToCurrency(value: number): string {
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  }
+
   function flattenPayload(payload: ReturnType<typeof preparePayload>) {
+
+    // Calcular valor_juros: 5% do valor_investimento
+    const valorInvestimentoNumero = currencyToNumber(payload.investimento.valorInvestimento || "0");
+    const valorJurosNumero = valorInvestimentoNumero * 0.05;
+    const valorJurosFormatado = numberToCurrency(valorJurosNumero);
 
     const flat: Record<string, any> = {
       id: payload.id,
@@ -747,6 +765,7 @@ export default function MultiStepForm({ token }: FormProps) {
       estado: payload.endereco.estado || "",
 
       valor_investimento: payload.investimento.valorInvestimento || "",
+      valor_juros: valorJurosFormatado,
       data_inicio_contrato: formatDateToExtended(payload.investimento.dataInicioContrato || ""),
       dia_pagamento: Number(payload.investimento.diaPagamento || 0),
       cliente_chavePix: payload.investimento.chavePixCliente || "",
