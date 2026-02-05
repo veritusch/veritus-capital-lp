@@ -11,6 +11,7 @@ import CEPInput from "./inputs/CEPInput";
 import DateInput from "./inputs/DateInput";
 import RGInput from "./inputs/RGInput";
 import { generateId } from "@/src/utils/uuid";
+import { CepService } from "@/src/services/cep.service";
 
 interface FormProps {
   token: string;
@@ -25,6 +26,7 @@ interface Step {
   placeholder?: string;
   options?: { label: string; value: string }[];
   required?: boolean;
+  disabled?: boolean;
 }
 
 interface FormData {
@@ -167,12 +169,21 @@ export default function MultiStepForm({ token }: FormProps) {
       required: true,
     });
 
+    // CEP primeiro para auto-preencher os outros campos
+    baseSteps.push({
+      name: "cep",
+      label: "Informe o seu CEP?",
+      type: "cep",
+      required: true,
+    });
+
     baseSteps.push({
       name: "logradouro",
       label: "Informe seu logradouro?",
       type: "text",
       placeholder: "(Rua, Avenida, etc)",
       required: true,
+      disabled: true,
     });
 
     baseSteps.push({
@@ -193,13 +204,7 @@ export default function MultiStepForm({ token }: FormProps) {
       label: "Informe o seu bairro?",
       type: "text",
       required: true,
-    });
-
-    baseSteps.push({
-      name: "cep",
-      label: "Informe o seu CEP?",
-      type: "cep",
-      required: true,
+      disabled: true,
     });
 
     baseSteps.push({
@@ -207,42 +212,15 @@ export default function MultiStepForm({ token }: FormProps) {
       label: "Informe a sua cidade?",
       type: "text",
       required: true,
+      disabled: true,
     });
 
     baseSteps.push({
       name: "estado",
       label: "Informe o seu estado?",
-      type: "select",
+      type: "text",
       required: true,
-      options: [
-        { label: "Acre", value: "Acre" },
-        { label: "Alagoas", value: "Alagoas" },
-        { label: "Amapá", value: "Amapá" },
-        { label: "Amazonas", value: "Amazonas" },
-        { label: "Bahia", value: "Bahia" },
-        { label: "Ceará", value: "Ceará" },
-        { label: "Distrito Federal", value: "Distrito Federal" },
-        { label: "Espírito Santo", value: "Espírito Santo" },
-        { label: "Goiás", value: "Goiás" },
-        { label: "Maranhão", value: "Maranhão" },
-        { label: "Mato Grosso", value: "Mato Grosso" },
-        { label: "Mato Grosso do Sul", value: "Mato Grosso do Sul" },
-        { label: "Minas Gerais", value: "Minas Gerais" },
-        { label: "Pará", value: "Pará" },
-        { label: "Paraíba", value: "Paraíba" },
-        { label: "Paraná", value: "Paraná" },
-        { label: "Pernambuco", value: "Pernambuco" },
-        { label: "Piauí", value: "Piauí" },
-        { label: "Rio de Janeiro", value: "Rio de Janeiro" },
-        { label: "Rio Grande do Norte", value: "Rio Grande do Norte" },
-        { label: "Rio Grande do Sul", value: "Rio Grande do Sul" },
-        { label: "Rondônia", value: "Rondônia" },
-        { label: "Roraima", value: "Roraima" },
-        { label: "Santa Catarina", value: "Santa Catarina" },
-        { label: "São Paulo", value: "São Paulo" },
-        { label: "Sergipe", value: "Sergipe" },
-        { label: "Tocantins", value: "Tocantins" },
-      ],
+      disabled: true,
     });
 
     baseSteps.push({
@@ -895,6 +873,7 @@ export default function MultiStepForm({ token }: FormProps) {
               }}
               placeholder={currentStep.placeholder}
               autoComplete={currentStep.name === "nomeCompleto" ? "name" : undefined}
+              disabled={currentStep.disabled}
             />
           )}
 
@@ -1019,17 +998,35 @@ export default function MultiStepForm({ token }: FormProps) {
           {currentStep.type === "cep" && (
             <CEPInput
               ref={inputRef as any}
-              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
-              onChange={(value) => handleChange(currentStep.name, value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && canProceed()) {
-                  e.preventDefault();
-                  handleNext();
+              value={
+                typeof formData[currentStep.name] === "string"
+                  ? (formData[currentStep.name] as string)
+                  : ""
+              }
+              onChange={async (value) => {
+                handleChange(currentStep.name, value);
+
+                const cepLimpo = CepService.normalize(value);
+
+                if (cepLimpo.length === 8) {
+                  const address = await CepService.lookup(cepLimpo);
+
+                  if (address) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      cep: value,
+                      logradouro: address.logradouro || prev.logradouro,
+                      bairro: address.bairro || prev.bairro,
+                      cidade: address.cidade || prev.cidade,
+                      estado: address.estado || prev.estado,
+                    }));
+                  }
                 }
               }}
               placeholder={currentStep.placeholder}
             />
           )}
+
 
           {currentStep.type === "date" && (
             <DateInput
