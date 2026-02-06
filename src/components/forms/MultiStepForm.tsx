@@ -17,7 +17,7 @@ interface FormProps {
   token: string;
 }
 
-type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep" | "date" | "rg" | "number";
+type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep" | "date" | "rg" | "number" | "address";
 
 interface Step {
   name: keyof FormData;
@@ -169,58 +169,12 @@ export default function MultiStepForm({ token }: FormProps) {
       required: true,
     });
 
-    // CEP primeiro para auto-preencher os outros campos
+    // Todos os campos de endereço em uma única tela
     baseSteps.push({
       name: "cep",
-      label: "Informe o seu CEP?",
-      type: "cep",
+      label: "Informe seu endereço completo",
+      type: "address",
       required: true,
-    });
-
-    baseSteps.push({
-      name: "logradouro",
-      label: "Informe seu logradouro?",
-      type: "text",
-      placeholder: "(Rua, Avenida, etc)",
-      required: true,
-      disabled: true,
-    });
-
-    baseSteps.push({
-      name: "numeroResidencia",
-      label: "Informe o número da sua residência?",
-      type: "number"
-    });
-
-    baseSteps.push({
-      name: "complemento",
-      label: "Informe o seu Complemento",
-      type: "text",
-      placeholder: "(Apto, Bloco, Casa, etc.)"
-    });
-
-    baseSteps.push({
-      name: "bairro",
-      label: "Informe o seu bairro?",
-      type: "text",
-      required: true,
-      disabled: true,
-    });
-
-    baseSteps.push({
-      name: "cidade",
-      label: "Informe a sua cidade?",
-      type: "text",
-      required: true,
-      disabled: true,
-    });
-
-    baseSteps.push({
-      name: "estado",
-      label: "Informe o seu estado?",
-      type: "text",
-      required: true,
-      disabled: true,
     });
 
     baseSteps.push({
@@ -538,6 +492,18 @@ export default function MultiStepForm({ token }: FormProps) {
       // CEP precisa ter exatamente 8 dígitos
       const numbers = stringValue.replace(/\D/g, "");
       return numbers.length === 8;
+    }
+
+    if (currentStep.type === "address") {
+      // Valida todos os campos obrigatórios de endereço
+      const cepNumbers = (formData.cep || "").replace(/\D/g, "");
+      const hasValidCep = cepNumbers.length === 8;
+      const hasLogradouro = Boolean(formData.logradouro?.trim());
+      const hasBairro = Boolean(formData.bairro?.trim());
+      const hasCidade = Boolean(formData.cidade?.trim());
+      const hasEstado = Boolean(formData.estado?.trim());
+      
+      return hasValidCep && hasLogradouro && hasBairro && hasCidade && hasEstado;
     }
 
     if (currentStep.type === "date") {
@@ -1027,6 +993,121 @@ export default function MultiStepForm({ token }: FormProps) {
             />
           )}
 
+          {currentStep.type === "address" && (
+            <div className="space-y-4">
+              {/* CEP */}
+              <div>
+                <label className="block text-sm text-brand-text-light/70 mb-2">
+                  CEP *
+                </label>
+                <CEPInput
+                  value={formData.cep || ""}
+                  onChange={async (value) => {
+                    handleChange("cep", value);
+
+                    const cepLimpo = CepService.normalize(value);
+
+                    if (cepLimpo.length === 8) {
+                      const address = await CepService.lookup(cepLimpo);
+
+                      if (address) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          cep: value,
+                          logradouro: address.logradouro || prev.logradouro,
+                          bairro: address.bairro || prev.bairro,
+                          cidade: address.cidade || prev.cidade,
+                          estado: address.estado || prev.estado,
+                        }));
+                      }
+                    }
+                  }}
+                  placeholder="00000-000"
+                />
+              </div>
+
+              {/* Logradouro */}
+              <div>
+                <label className="block text-sm text-brand-text-light/70 mb-2">
+                  Logradouro *
+                </label>
+                <TextInput
+                  type="text"
+                  value={formData.logradouro || ""}
+                  onChange={(value) => handleChange("logradouro", value)}
+                  placeholder="Rua, Avenida, etc."
+                  disabled={true}
+                />
+              </div>
+
+              {/* Número e Complemento na mesma linha */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                    Número
+                  </label>
+                  <NumberInput
+                    value={formData.numeroResidencia || ""}
+                    onChange={(value) => handleChange("numeroResidencia", value)}
+                    placeholder="123"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                    Complemento
+                  </label>
+                  <TextInput
+                    type="text"
+                    value={formData.complemento || ""}
+                    onChange={(value) => handleChange("complemento", value)}
+                    placeholder="Apto, Bloco, etc."
+                  />
+                </div>
+              </div>
+
+              {/* Bairro */}
+              <div>
+                <label className="block text-sm text-brand-text-light/70 mb-2">
+                  Bairro *
+                </label>
+                <TextInput
+                  type="text"
+                  value={formData.bairro || ""}
+                  onChange={(value) => handleChange("bairro", value)}
+                  placeholder="Bairro"
+                  disabled={true}
+                />
+              </div>
+
+              {/* Cidade e Estado na mesma linha */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                    Cidade *
+                  </label>
+                  <TextInput
+                    type="text"
+                    value={formData.cidade || ""}
+                    onChange={(value) => handleChange("cidade", value)}
+                    placeholder="Cidade"
+                    disabled={true}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                    Estado *
+                  </label>
+                  <TextInput
+                    type="text"
+                    value={formData.estado || ""}
+                    onChange={(value) => handleChange("estado", value)}
+                    placeholder="Estado"
+                    disabled={true}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {currentStep.type === "date" && (
             <DateInput
