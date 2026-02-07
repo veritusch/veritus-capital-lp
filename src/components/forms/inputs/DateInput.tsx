@@ -59,10 +59,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
         ref={ref}
         type="date"
         tabIndex={tabIndex}
-        className="w-full rounded-lg bg-brand-dark-bg-chumbo px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none transition-all shadow-[2px_2px_8px_rgba(0,0,0,0.3)] 
-        [color-scheme:dark]
-        cursor-pointer
-        hover:bg-brand-dark-bg-chumbo/80"
+        className="w-full rounded-lg bg-brand-dark-bg-primary border border-brand-brown/30 px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/20 transition-all [color-scheme:dark] cursor-pointer"
         value={inputValue}
         onChange={handleChange}
         onKeyDown={onKeyDown}

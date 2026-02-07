@@ -914,7 +914,7 @@ export default function MultiStepForm({ token }: FormProps) {
               ref={inputRef as any}
               rows={4}
               placeholder="Opcional..."
-              className="w-full rounded-lg bg-brand-dark-bg-chumbo px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none transition-all resize-none shadow-[2px_2px_8px_rgba(0,0,0,0.3)]"
+              className="w-full rounded-lg bg-brand-dark-bg-primary border border-brand-brown/30 px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/20 transition-all resize-none"
               value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
               onChange={(e) => handleChange(currentStep.name, e.target.value)}
               onKeyDown={(e) => {
@@ -1148,8 +1148,8 @@ export default function MultiStepForm({ token }: FormProps) {
                   }}
                   className={`w-full border rounded-lg px-4 py-3 text-left typography-helvetica transition-all
                     ${formData[currentStep.name] === opt.value
-                      ? "border-brand-brown bg-brand-brown/20 text-brand-text-light shadow-sm"
-                      : "border-brand-brown/30 text-brand-text-light/70 hover:bg-brand-dark-bg-primary hover:border-brand-brown/50 hover:text-brand-text-light"
+                      ? "border-brand-brown bg-brand-brown/20 text-brand-text-light"
+                      : "border-brand-brown/30 bg-brand-dark-bg-primary text-brand-text-light hover:border-brand-brown/50"
                     }`}
                 >
                   {opt.label}
