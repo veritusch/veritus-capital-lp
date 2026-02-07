@@ -1061,6 +1061,7 @@ export default function MultiStepForm({ token }: FormProps) {
                     value={formData.complemento || ""}
                     onChange={(value) => handleChange("complemento", value)}
                     placeholder="Apto, Bloco, etc."
+                    className="w-full rounded-lg bg-brand-golden-light border border-brand-brown/30 px-4 py-3 typography-helvetica text-brand-text-light placeholder:text-brand-text-light/40 focus:outline-none focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
