@@ -784,6 +784,11 @@ export default function MultiStepForm({ token }: FormProps) {
   }
 
   function handleBack() {
+    // Limpa o valor do campo atual antes de voltar
+    setFormData((prev) => ({
+      ...prev,
+      [currentStep.name]: "",
+    }));
     setStep((prev) => Math.max(0, prev - 1));
   }
 
