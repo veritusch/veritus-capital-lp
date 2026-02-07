@@ -377,7 +377,8 @@ export default function MultiStepForm({ token }: FormProps) {
       baseSteps.push({
         name: "chavePixCliente",
         label: "Qual é a sua chave PIX?",
-        type: "text"
+        type: "text",
+        required: true
       });
     }
 
@@ -397,6 +398,20 @@ export default function MultiStepForm({ token }: FormProps) {
   useEffect(() => {
     inputRef.current?.focus();
   }, [step]);
+
+  // Desmarca o checkbox da LGPD se os campos PIX ficarem vazios
+  useEffect(() => {
+    const pixClienteVazio = !formData.chavePixCliente?.trim();
+    const pixTerceiroVazio = !formData.chavePixTerceiro?.trim();
+    
+    // Se ambos os campos PIX estiverem vazios e o checkbox estiver marcado, desmarca
+    if (pixClienteVazio && pixTerceiroVazio && formData.aceiteLGPD === "Sim") {
+      setFormData((prev) => ({
+        ...prev,
+        aceiteLGPD: "",
+      }));
+    }
+  }, [formData.chavePixCliente, formData.chavePixTerceiro, formData.aceiteLGPD]);
 
   function handleChange(field: keyof FormData, value: string) {
     setFormData((prev) => ({
@@ -1158,12 +1173,16 @@ export default function MultiStepForm({ token }: FormProps) {
               ))}
             </div>
           )}
+
         </div>
       </div>
 
-      {/* Checkbox de aceite LGPD - aparece apenas na última tela */}
+      {/* Checkbox de aceite LGPD - aparece apenas na última tela e se o campo PIX estiver preenchido */}
       {step === steps.length - 1 && (
-        <div className="mt-4">
+        (currentStep.name === "chavePixCliente" && formData.chavePixCliente?.trim()) ||
+        (currentStep.name === "chavePixTerceiro" && formData.chavePixTerceiro?.trim())
+      ) && (
+        <div className="mb-2 px-2 py-3 border border-brand-brown/30 rounded-lg bg-brand-dark-bg-primary">
           <label className="flex items-start gap-3 cursor-pointer group">
             <input
               type="checkbox"
