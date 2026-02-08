@@ -6,11 +6,17 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request) {
     const requestId = crypto.randomUUID();
-    const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+    
+    // Seleciona o webhook baseado no ambiente
+    const isDev = process.env.NODE_ENV === 'development';
+    const webhookUrl = isDev 
+        ? process.env.MAKE_WEBHOOK_URL_DEV 
+        : process.env.MAKE_WEBHOOK_URL;
 
     if (!webhookUrl) {
+        const envVar = isDev ? 'MAKE_WEBHOOK_URL_DEV' : 'MAKE_WEBHOOK_URL';
         return NextResponse.json(
-            { ok: false, error: "MAKE_WEBHOOK_URL_NOT_CONFIGURED", requestId },
+            { ok: false, error: `${envVar}_NOT_CONFIGURED`, requestId },
             { status: 500 }
         );
     }
@@ -36,6 +42,8 @@ export async function POST(req: Request) {
     // Logs mínimos (LGPD-safe)
     console.log("LEAD_REQUEST_RECEIVED", {
         requestId,
+        environment: process.env.NODE_ENV,
+        webhookType: isDev ? 'dev' : 'production',
         payloadSize: payloadStr.length,
         origin: req.headers.get("origin"),
         userAgent: req.headers.get("user-agent"),
