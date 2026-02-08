@@ -807,10 +807,10 @@ export default function MultiStepForm({ token }: FormProps) {
 
       // ========== MOCK - REMOVER DEPOIS ==========
       // Simula envio bem-sucedido sem chamar a API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setSubmitStatus("success");
-      removeToken(token);
-      return;
+      // await new Promise(resolve => setTimeout(resolve, 1500));
+      // setSubmitStatus("success");
+      // removeToken(token);
+      // return;
       // ========== FIM MOCK ==========
 
       const res = await fetch("/api/lead", {
