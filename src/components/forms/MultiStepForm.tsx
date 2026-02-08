@@ -12,6 +12,7 @@ import DateInput from "./inputs/DateInput";
 import RGInput from "./inputs/RGInput";
 import { generateId } from "@/src/utils/uuid";
 import { CepService } from "@/src/services/cep.service";
+import { removeToken } from "@/src/lib/token";
 
 interface FormProps {
   token: string;
@@ -804,6 +805,14 @@ export default function MultiStepForm({ token }: FormProps) {
         console.log("Payload:", flatPayload);
       }
 
+      // ========== MOCK - REMOVER DEPOIS ==========
+      // Simula envio bem-sucedido sem chamar a API
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setSubmitStatus("success");
+      removeToken(token);
+      return;
+      // ========== FIM MOCK ==========
+
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -816,6 +825,9 @@ export default function MultiStepForm({ token }: FormProps) {
       }
 
       setSubmitStatus("success");
+      
+      // Invalida o token após envio bem-sucedido
+      removeToken(token);
     } catch (err) {
       console.error(err);
       setSubmitStatus("error");

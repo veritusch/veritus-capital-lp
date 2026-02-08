@@ -60,3 +60,28 @@ export function saveToken(token: string): void {
         localStorage.setItem("validTokens", JSON.stringify(tokens));
     }
 }
+
+/**
+ * Remove um token do armazenamento local, invalidando-o
+ */
+export function removeToken(token: string): void {
+    if (typeof window === "undefined") return;
+
+    // Marca o token como usado
+    const usedKey = `form-used-${token}`;
+    localStorage.setItem(usedKey, JSON.stringify({
+        usedAt: new Date().toISOString()
+    }));
+
+    // Remove da lista de tokens válidos
+    const validTokens = localStorage.getItem("validTokens");
+    if (validTokens) {
+        const tokens = JSON.parse(validTokens);
+        const filtered = tokens.filter((t: string) => t !== token);
+        localStorage.setItem("validTokens", JSON.stringify(filtered));
+    }
+
+    // Remove o acesso específico do formulário
+    const storageKey = `form-access-${token}`;
+    localStorage.removeItem(storageKey);
+}
