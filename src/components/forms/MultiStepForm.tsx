@@ -80,6 +80,8 @@ export default function MultiStepForm({ token }: FormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] =
     useState<"idle" | "success" | "error">("idle");
+  const [logradouroFromAPI, setLogradouroFromAPI] = useState(false);
+  const [bairroFromAPI, setBairroFromAPI] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     id: generateId(),
@@ -786,9 +788,26 @@ export default function MultiStepForm({ token }: FormProps) {
 
   function handleBack() {
     // Limpa o valor do campo atual antes de voltar
+    const updatedData: Partial<FormData> = {
+      [currentStep.name]: "",
+    };
+
+    // Se o campo atual for de endereço (cep ou address), limpa todos os campos relacionados
+    if (currentStep.type === "cep" || currentStep.type === "address") {
+      updatedData.cep = "";
+      updatedData.logradouro = "";
+      updatedData.numeroResidencia = "";
+      updatedData.complemento = "";
+      updatedData.bairro = "";
+      updatedData.cidade = "";
+      updatedData.estado = "";
+      setLogradouroFromAPI(false);
+      setBairroFromAPI(false);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [currentStep.name]: "",
+      ...updatedData,
     }));
     setStep((prev) => Math.max(0, prev - 1));
   }
@@ -1010,6 +1029,8 @@ export default function MultiStepForm({ token }: FormProps) {
                   const address = await CepService.lookup(cepLimpo);
 
                   if (address) {
+                    setLogradouroFromAPI(Boolean(address.logradouro?.trim()));
+                    setBairroFromAPI(Boolean(address.bairro?.trim()));
                     setFormData((prev) => ({
                       ...prev,
                       cep: value,
@@ -1019,6 +1040,20 @@ export default function MultiStepForm({ token }: FormProps) {
                       estado: address.estado || prev.estado,
                     }));
                   }
+                } else if (cepLimpo.length === 0) {
+                  // Limpa os campos quando o CEP é removido
+                  setLogradouroFromAPI(false);
+                  setBairroFromAPI(false);
+                  setFormData((prev) => ({
+                    ...prev,
+                    cep: value,
+                    logradouro: "",
+                    numeroResidencia: "",
+                    complemento: "",
+                    bairro: "",
+                    cidade: "",
+                    estado: "",
+                  }));
                 }
               }}
               placeholder={currentStep.placeholder}
@@ -1043,6 +1078,8 @@ export default function MultiStepForm({ token }: FormProps) {
                       const address = await CepService.lookup(cepLimpo);
 
                       if (address) {
+                        setLogradouroFromAPI(Boolean(address.logradouro?.trim()));
+                        setBairroFromAPI(Boolean(address.bairro?.trim()));
                         setFormData((prev) => ({
                           ...prev,
                           cep: value,
@@ -1052,6 +1089,20 @@ export default function MultiStepForm({ token }: FormProps) {
                           estado: address.estado || prev.estado,
                         }));
                       }
+                    } else if (cepLimpo.length === 0) {
+                      // Limpa os campos quando o CEP é removido
+                      setLogradouroFromAPI(false);
+                      setBairroFromAPI(false);
+                      setFormData((prev) => ({
+                        ...prev,
+                        cep: value,
+                        logradouro: "",
+                        numeroResidencia: "",
+                        complemento: "",
+                        bairro: "",
+                        cidade: "",
+                        estado: "",
+                      }));
                     }
                   }}
                   placeholder="00000-000"
@@ -1068,7 +1119,7 @@ export default function MultiStepForm({ token }: FormProps) {
                   value={formData.logradouro || ""}
                   onChange={(value) => handleChange("logradouro", value)}
                   placeholder="Rua, Avenida, etc."
-                  disabled={true}
+                  disabled={logradouroFromAPI}
                 />
               </div>
 
@@ -1108,7 +1159,7 @@ export default function MultiStepForm({ token }: FormProps) {
                   value={formData.bairro || ""}
                   onChange={(value) => handleChange("bairro", value)}
                   placeholder="Bairro"
-                  disabled={true}
+                  disabled={bairroFromAPI}
                 />
               </div>
 
