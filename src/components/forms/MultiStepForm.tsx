@@ -7,6 +7,7 @@ import CurrencyInput from "./inputs/CurrencyInput";
 import TextInput from "./inputs/TextInput";
 import NumberInput from "./inputs/NumberInput";
 import CPFInput from "./inputs/CPFInput";
+import CNPJInput from "./inputs/CNPJInput";
 import CEPInput from "./inputs/CEPInput";
 import DateInput from "./inputs/DateInput";
 import RGInput from "./inputs/RGInput";
@@ -18,7 +19,7 @@ interface FormProps {
   token: string;
 }
 
-type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cep" | "date" | "rg" | "number" | "address";
+type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cnpj" | "cep" | "date" | "rg" | "number" | "address";
 
 interface Step {
   name: keyof FormData;
@@ -51,6 +52,7 @@ interface FormData {
   desejaAdicionarHerdeiros?: string;
   quantidadeHerdeiros?: string;
   desejaDepositoTerceiro?: string;
+  tipoTerceiro?: string;
   chavePixCliente?: string;
   nomeHerdeiro1?: string;
   nomeHerdeiro2?: string;
@@ -66,6 +68,7 @@ interface FormData {
   grauParentescoHerdeiro3?: string;
   nomeTerceiro: string;
   cpfTerceiro: string;
+  cnpjTerceiro: string;
   nomeBancoTerceiro: string;
   agenciaTerceiro: string;
   contaTerceiro: string;
@@ -105,6 +108,7 @@ export default function MultiStepForm({ token }: FormProps) {
     desejaDepositoTerceiro: "",
     nomeTerceiro: "",
     cpfTerceiro: "",
+    cnpjTerceiro: "",
     nomeBancoTerceiro: "",
     agenciaTerceiro: "",
     contaTerceiro: "",
@@ -332,47 +336,107 @@ export default function MultiStepForm({ token }: FormProps) {
 
     // Adiciona campos de terceiro se a resposta for "Sim"
     if (formData.desejaDepositoTerceiro === "Sim") {
-      baseSteps.push(
-        {
-          name: "nomeTerceiro",
-          label: "Informe o nome completo do terceiro?",
-          type: "text",
-          required: true,
-        },
-        {
-          name: "cpfTerceiro",
-          label: "Informe o CPF do terceiro?",
-          type: "cpf",
-          required: true,
-        },
-        {
-          name: "nomeBancoTerceiro",
-          label: "Informe o nome do banco?",
-          type: "text",
-          placeholder: "(Ex: Banco do Brasil, Bradesco, Itaú)",
-          required: true,
-        },
-        {
-          name: "agenciaTerceiro",
-          label: "Informe a agência?",
-          type: "text",
-          placeholder: "(Ex: 0001)",
-          required: true,
-        },
-        {
-          name: "contaTerceiro",
-          label: "Informe o número da conta?",
-          type: "text",
-          placeholder: "(Ex: 12345-6)",
-          required: true,
-        },
-        {
-          name: "chavePixTerceiro",
-          label: "Informe a chave PIX do terceiro?",
-          type: "text",
-          required: true,
-        }
-      );
+      // Adiciona pergunta sobre tipo de pessoa
+      baseSteps.push({
+        name: "tipoTerceiro",
+        label: "Informe se esta pessoa é física ou jurídica",
+        type: "select",
+        required: true,
+        options: [
+          { label: "CPF", value: "CPF" },
+          { label: "CNPJ", value: "CNPJ" },
+        ],
+      });
+
+      // Se escolheu CPF (Pessoa Física)
+      if (formData.tipoTerceiro === "CPF") {
+        baseSteps.push(
+          {
+            name: "cpfTerceiro",
+            label: "Informe o CPF do terceiro?",
+            type: "cpf",
+            required: true,
+          },
+          {
+            name: "nomeTerceiro",
+            label: "Informe o nome completo do terceiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "nomeBancoTerceiro",
+            label: "Informe o nome do banco?",
+            type: "text",
+            placeholder: "(Ex: Banco do Brasil, Bradesco, Itaú)",
+            required: true,
+          },
+          {
+            name: "agenciaTerceiro",
+            label: "Informe a agência?",
+            type: "text",
+            placeholder: "(Ex: 0001)",
+            required: true,
+          },
+          {
+            name: "contaTerceiro",
+            label: "Informe o número da conta?",
+            type: "text",
+            placeholder: "(Ex: 12345-6)",
+            required: true,
+          },
+          {
+            name: "chavePixTerceiro",
+            label: "Informe a chave PIX do terceiro?",
+            type: "text",
+            required: true,
+          }
+        );
+      }
+
+      // Se escolheu CNPJ (Pessoa Jurídica)
+      if (formData.tipoTerceiro === "CNPJ") {
+        baseSteps.push(
+          {
+            name: "cnpjTerceiro",
+            label: "Informe o CNPJ do terceiro?",
+            type: "cnpj",
+            required: true,
+          },
+          {
+            name: "nomeTerceiro",
+            label: "Informe a razão social do terceiro?",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "nomeBancoTerceiro",
+            label: "Informe o nome do banco?",
+            type: "text",
+            placeholder: "(Ex: Banco do Brasil, Bradesco, Itaú)",
+            required: true,
+          },
+          {
+            name: "agenciaTerceiro",
+            label: "Informe a agência?",
+            type: "text",
+            placeholder: "(Ex: 0001)",
+            required: true,
+          },
+          {
+            name: "contaTerceiro",
+            label: "Informe o número da conta?",
+            type: "text",
+            placeholder: "(Ex: 12345-6)",
+            required: true,
+          },
+          {
+            name: "chavePixTerceiro",
+            label: "Informe a chave PIX do terceiro?",
+            type: "text",
+            required: true,
+          }
+        );
+      }
     }
 
     // Adiciona o campo chave PIX do cliente no final
@@ -386,7 +450,7 @@ export default function MultiStepForm({ token }: FormProps) {
     }
 
     return baseSteps;
-  }, [formData.desejaAdicionarHerdeiros, formData.quantidadeHerdeiros, formData.desejaDepositoTerceiro, formData.telefoneEhWhatsapp]);
+  }, [formData.desejaAdicionarHerdeiros, formData.quantidadeHerdeiros, formData.desejaDepositoTerceiro, formData.tipoTerceiro, formData.telefoneEhWhatsapp]);
 
   const currentStep = steps[step] ?? steps[steps.length - 1];
 
@@ -452,6 +516,37 @@ export default function MultiStepForm({ token }: FormProps) {
     return true;
   }
 
+  function validateCNPJ(cnpj: string): boolean {
+    const numbers = cnpj.replace(/\D/g, "");
+
+    if (numbers.length !== 14) return false;
+
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1+$/.test(numbers)) return false;
+
+    // Validação do primeiro dígito verificador
+    let sum = 0;
+    let weight = 5;
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(numbers.charAt(i)) * weight;
+      weight = weight === 2 ? 9 : weight - 1;
+    }
+    let digit = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+    if (digit !== parseInt(numbers.charAt(12))) return false;
+
+    // Validação do segundo dígito verificador
+    sum = 0;
+    weight = 6;
+    for (let i = 0; i < 13; i++) {
+      sum += parseInt(numbers.charAt(i)) * weight;
+      weight = weight === 2 ? 9 : weight - 1;
+    }
+    digit = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+    if (digit !== parseInt(numbers.charAt(13))) return false;
+
+    return true;
+  }
+
   function canProceed() {
     if (!currentStep.required) return true;
 
@@ -490,6 +585,13 @@ export default function MultiStepForm({ token }: FormProps) {
       const numbers = stringValue.replace(/\D/g, "");
       if (numbers.length !== 11) return false;
       return validateCPF(stringValue);
+    }
+
+    if (currentStep.type === "cnpj") {
+      // CNPJ precisa ter exatamente 14 dígitos e ser válido
+      const numbers = stringValue.replace(/\D/g, "");
+      if (numbers.length !== 14) return false;
+      return validateCNPJ(stringValue);
     }
 
     if (currentStep.type === "rg") {
@@ -719,8 +821,8 @@ export default function MultiStepForm({ token }: FormProps) {
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
       logradouro: payload.endereco.logradouro || "",
-      numero_residencia: payload.endereco.numeroResidencia || 0,
-      complemento: payload.endereco.complemento || "",
+      numero_residencia: payload.endereco.numeroResidencia || "s/n",
+      complemento: payload.endereco.complemento || "s/c",
       bairro: payload.endereco.bairro || "",
       cep: payload.endereco.cep || "",
       cidade: payload.endereco.cidade || "",
@@ -992,6 +1094,21 @@ export default function MultiStepForm({ token }: FormProps) {
             />
           )}
 
+          {currentStep.type === "cnpj" && (
+            <CNPJInput
+              ref={inputRef as any}
+              value={typeof formData[currentStep.name] === 'string' ? formData[currentStep.name] as string : ''}
+              onChange={(value) => handleChange(currentStep.name, value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canProceed()) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
+              placeholder={currentStep.placeholder}
+            />
+          )}
+
           {currentStep.type === "rg" && (
             <RGInput
               ref={inputRef as any}
@@ -1064,7 +1181,7 @@ export default function MultiStepForm({ token }: FormProps) {
             <div className="space-y-4">
               {/* CEP */}
               <div>
-                <label className="block text-sm text-brand-text-light/70 mb-2">
+                <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                   CEP *
                 </label>
                 <CEPInput
@@ -1111,7 +1228,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
               {/* Logradouro */}
               <div>
-                <label className="block text-sm text-brand-text-light/70 mb-2">
+                <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                   Logradouro *
                 </label>
                 <TextInput
@@ -1126,7 +1243,7 @@ export default function MultiStepForm({ token }: FormProps) {
               {/* Número e Complemento na mesma linha */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                  <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                     Número
                   </label>
                   <NumberInput
@@ -1136,7 +1253,7 @@ export default function MultiStepForm({ token }: FormProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                  <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                     Complemento
                   </label>
                   <TextInput
@@ -1151,7 +1268,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
               {/* Bairro */}
               <div>
-                <label className="block text-sm text-brand-text-light/70 mb-2">
+                <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                   Bairro *
                 </label>
                 <TextInput
@@ -1166,7 +1283,7 @@ export default function MultiStepForm({ token }: FormProps) {
               {/* Cidade e Estado na mesma linha */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                  <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                     Cidade *
                   </label>
                   <TextInput
@@ -1178,7 +1295,7 @@ export default function MultiStepForm({ token }: FormProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-brand-text-light/70 mb-2">
+                  <label className="block text-sm text-brand-text-light/70 mb-2 typography-helvetica">
                     Estado *
                   </label>
                   <TextInput
