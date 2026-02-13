@@ -60,9 +60,6 @@ interface FormData {
   cpfHerdeiro1?: string;
   cpfHerdeiro2?: string;
   cpfHerdeiro3?: string;
-  rgHerdeiro1?: string;
-  rgHerdeiro2?: string;
-  rgHerdeiro3?: string;
   grauParentescoHerdeiro1?: string;
   grauParentescoHerdeiro2?: string;
   grauParentescoHerdeiro3?: string;
@@ -244,12 +241,6 @@ export default function MultiStepForm({ token }: FormProps) {
             required: true,
           },
           {
-            name: "rgHerdeiro1",
-            label: "Informe o RG do 1º herdeiro?",
-            type: "rg",
-            required: true,
-          },
-          {
             name: "grauParentescoHerdeiro1",
             label: "Informe o grau de parentesco do 1º herdeiro?",
             type: "text",
@@ -275,12 +266,6 @@ export default function MultiStepForm({ token }: FormProps) {
             required: true,
           },
           {
-            name: "rgHerdeiro2",
-            label: "Informe o RG do 2º herdeiro?",
-            type: "rg",
-            required: true,
-          },
-          {
             name: "grauParentescoHerdeiro2",
             label: "Informe o grau de parentesco do 2º herdeiro?",
             type: "text",
@@ -303,12 +288,6 @@ export default function MultiStepForm({ token }: FormProps) {
             name: "cpfHerdeiro3",
             label: "Informe o CPF do 3º herdeiro?",
             type: "cpf",
-            required: true,
-          },
-          {
-            name: "rgHerdeiro3",
-            label: "Informe o RG do 3º herdeiro?",
-            type: "rg",
             required: true,
           },
           {
@@ -676,7 +655,6 @@ export default function MultiStepForm({ token }: FormProps) {
       return {
         nome: capitalize(cleanText(data[`nomeHerdeiro${n}` as keyof FormData] as string)),
         cpf: data[`cpfHerdeiro${n}` as keyof FormData],
-        rg: data[`rgHerdeiro${n}` as keyof FormData],
         parentesco: capitalize(cleanText(data[`grauParentescoHerdeiro${n}` as keyof FormData] as string)),
       };
     });
@@ -745,7 +723,7 @@ export default function MultiStepForm({ token }: FormProps) {
         data.desejaDepositoTerceiro === "Sim"
           ? {
             nome: capitalize(cleanText(data.nomeTerceiro)),
-            cpf: data.cpfTerceiro,
+            documento: data.tipoTerceiro === "CNPJ" ? data.cnpjTerceiro : data.cpfTerceiro,
 
             banco: capitalize(cleanText(data.nomeBancoTerceiro)),
             agencia: cleanText(data.agenciaTerceiro),
@@ -822,7 +800,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
       logradouro: payload.endereco.logradouro || "",
       numero_residencia: payload.endereco.numeroResidencia || "s/n",
-      complemento: payload.endereco.complemento || "s/c",
+      complemento: payload.endereco.complemento || "",
       bairro: payload.endereco.bairro || "",
       cep: payload.endereco.cep || "",
       cidade: payload.endereco.cidade || "",
@@ -849,7 +827,6 @@ export default function MultiStepForm({ token }: FormProps) {
       const idx = i + 1;
       flat[`herdeiro${idx}_nome`] = h.nome || "";
       flat[`herdeiro${idx}_cpf`] = h.cpf || "";
-      flat[`herdeiro${idx}_rg`] = h.rg || "";
       flat[`herdeiro${idx}_parentesco`] = h.parentesco || "";
     });
 
@@ -857,14 +834,13 @@ export default function MultiStepForm({ token }: FormProps) {
     for (let i = payload.herdeiros.length + 1; i <= 3; i++) {
       flat[`herdeiro${i}_nome`] = "";
       flat[`herdeiro${i}_cpf`] = "";
-      flat[`herdeiro${i}_rg`] = "";
       flat[`herdeiro${i}_parentesco`] = "";
     }
 
     // Terceiro
     if (payload.terceiro) {
       flat["terceiro_nome"] = payload.terceiro.nome || "";
-      flat["terceiro_cpf"] = payload.terceiro.cpf || "";
+      flat["terceiro_cpf"] = payload.terceiro.documento || "";
       flat["terceiro_banco"] = payload.terceiro.banco || "";
       flat["terceiro_agencia"] = payload.terceiro.agencia || "";
       flat["terceiro_conta"] = payload.terceiro.conta || "";
@@ -1109,7 +1085,7 @@ export default function MultiStepForm({ token }: FormProps) {
             />
           )}
 
-          {currentStep.type === "rg" && (
+          {/* {currentStep.type === "rg" && (
             <RGInput
               ref={inputRef as any}
               value={
@@ -1126,7 +1102,7 @@ export default function MultiStepForm({ token }: FormProps) {
               }}
               placeholder={currentStep.placeholder}
             />
-          )}
+          )} */}
 
 
           {currentStep.type === "cep" && (
