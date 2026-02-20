@@ -1,9 +1,9 @@
 import Image from "next/image"
 import { WhatsAppButton } from "@/src/components/ui/WhatsAppButton";
 
-const WHATSAPP_PHONE = "5581994423593";
+const WHATSAPP_PHONE = "5581973197996";
 const EXPIRED_LINK_MESSAGE =
-    "Olá! Meu link de acesso ao formulário expirou. Solicito um novo link.";
+    "Olá! Meu link de acesso ao formulário de cadastro expirou. Solicito um novo link.";
 
 
 export default function LinkExpired() {
