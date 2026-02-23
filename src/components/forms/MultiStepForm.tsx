@@ -82,6 +82,7 @@ export default function MultiStepForm({ token }: FormProps) {
     useState<"idle" | "success" | "error">("idle");
   const [logradouroFromAPI, setLogradouroFromAPI] = useState(false);
   const [bairroFromAPI, setBairroFromAPI] = useState(false);
+  const [cepError, setCepError] = useState<string>("");
 
   const [formData, setFormData] = useState<FormData>({
     id: generateId(),
@@ -1165,6 +1166,7 @@ export default function MultiStepForm({ token }: FormProps) {
                   value={formData.cep || ""}
                   onChange={async (value) => {
                     handleChange("cep", value);
+                    setCepError(""); // Limpa erro ao digitar
 
                     const cepLimpo = CepService.normalize(value);
 
@@ -1182,6 +1184,9 @@ export default function MultiStepForm({ token }: FormProps) {
                           cidade: address.cidade || prev.cidade,
                           estado: address.estado || prev.estado,
                         }));
+                      } else {
+                        // CEP não encontrado
+                        setCepError("CEP não encontrado. Verifique o número digitado.");
                       }
                     } else if (cepLimpo.length === 0) {
                       // Limpa os campos quando o CEP é removido
@@ -1201,6 +1206,11 @@ export default function MultiStepForm({ token }: FormProps) {
                   }}
                   placeholder="00000-000"
                 />
+                {cepError && (
+                  <p className="mt-2 text-sm text-red-600 typography-helvetica">
+                    {cepError}
+                  </p>
+                )}
               </div>
 
               {/* Logradouro */}
