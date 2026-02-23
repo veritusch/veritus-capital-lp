@@ -17,8 +17,6 @@ type ViaCepResponse = {
 };
 
 export class CepService {
-    private static readonly VIA_CEP_URL = "https://viacep.com.br/ws";
-
     private static readonly UF_TO_STATE: Record<string, string> = {
         AC: "Acre",
         AL: "Alagoas",
@@ -62,25 +60,25 @@ export class CepService {
 
         if (!this.isValid(cep)) return null;
 
-        const res = await fetch(`${this.VIA_CEP_URL}/${cep}/json/`, {
-            method: "GET",
-            headers: { Accept: "application/json" },
-        });
+        try {
+            const res = await fetch(`/api/cep?cep=${cep}`);
 
-        if (!res.ok) return null;
+            if (!res.ok) return null;
 
-        const data = (await res.json()) as ViaCepResponse;
+            const data = (await res.json()) as ViaCepResponse;
 
-        if (data.erro) return null;
+            const uf = data.uf?.trim() || "";
+            const estadoNome = this.UF_TO_STATE[uf] || uf;
 
-        const uf = data.uf?.trim() || "";
-        const estadoNome = this.UF_TO_STATE[uf] || uf;
-
-        return {
-            logradouro: data.logradouro?.trim() || "",
-            bairro: data.bairro?.trim() || "",
-            cidade: data.localidade?.trim() || "",
-            estado: estadoNome,
-        };
+            return {
+                logradouro: data.logradouro?.trim() || "",
+                bairro: data.bairro?.trim() || "",
+                cidade: data.localidade?.trim() || "",
+                estado: estadoNome,
+            };
+        } catch (error) {
+            console.error("Error fetching CEP:", error);
+            return null;
+        }
     }
 }
