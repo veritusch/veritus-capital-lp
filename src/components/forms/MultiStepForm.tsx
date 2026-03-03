@@ -782,6 +782,13 @@ export default function MultiStepForm({ token }: FormProps) {
     });
   }
 
+  // Para BR remove o +55, para outros países mantém o formato internacional
+  function stripDialCode(phone: string): string {
+    const brMatch = phone.match(/^\+55\s?(.*)/);
+    if (brMatch) return brMatch[1];
+    return phone.replace(/^\+/, "");
+  }
+
   function flattenPayload(payload: ReturnType<typeof preparePayload>) {
 
     // Calcular valor_juros: 5% do valor_investimento
@@ -794,8 +801,9 @@ export default function MultiStepForm({ token }: FormProps) {
       cliente_nomeCompleto: payload.cliente.nomeCompleto || "",
       cliente_primeiroNome: getFirstName(payload.cliente.nomeCompleto || ""),
       cliente_email: payload.cliente.email || "",
-      cliente_telefone: payload.cliente.telefone || "",
-      cliente_numeroWhatsapp: (payload.cliente.numeroWhatsapp || "").replace(/\D/g, ""),
+      cliente_telefone: stripDialCode(payload.cliente.telefone || ""),
+      cliente_numeroWhatsapp: stripDialCode(payload.cliente.numeroWhatsapp || "").replace(/\D/g, ""),
+      numero_internacional: (payload.cliente.telefone || "").startsWith("+55") ? false : true,
       cliente_cpf: payload.cliente.cpf || "",
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
