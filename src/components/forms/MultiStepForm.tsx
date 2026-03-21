@@ -14,6 +14,7 @@ import RGInput from "./inputs/RGInput";
 import { generateId } from "@/src/utils/uuid";
 import { CepService } from "@/src/services/cep.service";
 import { removeToken } from "@/src/lib/token";
+import FormSuccess from "./FormSuccess";
 
 interface FormProps {
   token: string;
@@ -440,8 +441,6 @@ export default function MultiStepForm({ token }: FormProps) {
     }
   }, [steps.length, step]);
 
-  if (!currentStep) return null;
-
   useEffect(() => {
     inputRef.current?.focus();
   }, [step]);
@@ -450,7 +449,7 @@ export default function MultiStepForm({ token }: FormProps) {
   useEffect(() => {
     const pixClienteVazio = !formData.chavePixCliente?.trim();
     const pixTerceiroVazio = !formData.chavePixTerceiro?.trim();
-    
+
     // Se ambos os campos PIX estiverem vazios e o checkbox estiver marcado, desmarca
     if (pixClienteVazio && pixTerceiroVazio && formData.aceiteLGPD === "Sim") {
       setFormData((prev) => ({
@@ -459,6 +458,10 @@ export default function MultiStepForm({ token }: FormProps) {
       }));
     }
   }, [formData.chavePixCliente, formData.chavePixTerceiro, formData.aceiteLGPD]);
+
+  if (submitStatus === "success") return <FormSuccess />;
+
+  if (!currentStep) return null;
 
   function handleChange(field: keyof FormData, value: string) {
     setFormData((prev) => ({
@@ -1427,14 +1430,6 @@ export default function MultiStepForm({ token }: FormProps) {
           </button>
         )}
       </div>
-
-      {submitStatus === "success" && (
-        <div className="mt-6 p-4 rounded-lg bg-green-500/10 border border-green-500/30">
-          <p className="typography-helvetica text-sm text-green-400 text-center">
-            ✓ Formulário enviado com sucesso!
-          </p>
-        </div>
-      )}
 
       {submitStatus === "error" && (
         <div className="mt-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30">
