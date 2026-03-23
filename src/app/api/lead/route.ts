@@ -9,12 +9,12 @@ export async function POST(req: Request) {
     
     // Seleciona o webhook baseado no ambiente
     const isDev = process.env.NODE_ENV === 'development';
-    const webhookUrl = isDev 
-        ? process.env.MAKE_WEBHOOK_URL_DEV 
-        : process.env.MAKE_WEBHOOK_URL;
+    const webhookUrl = isDev
+        ? process.env.BACKEND_WEBHOOK_URL_DEV
+        : process.env.BACKEND_WEBHOOK_URL;
 
     if (!webhookUrl) {
-        const envVar = isDev ? 'MAKE_WEBHOOK_URL_DEV' : 'MAKE_WEBHOOK_URL';
+        const envVar = isDev ? 'MAKE_WEBHOOK_URL_DEV' : 'BACKEND_WEBHOOK_URL';
         return NextResponse.json(
             { ok: false, error: `${envVar}_NOT_CONFIGURED`, requestId },
             { status: 500 }
@@ -58,6 +58,7 @@ export async function POST(req: Request) {
             headers: {
                 "Content-Type": "application/json",
                 "X-Request-Id": requestId,
+                "X-Webhook-Secret": process.env.WEBHOOK_SECRET ?? '',
             },
             body: payloadStr,
             signal: controller.signal,
