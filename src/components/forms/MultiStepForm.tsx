@@ -20,7 +20,7 @@ interface FormProps {
   token: string;
 }
 
-type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cnpj" | "cep" | "date" | "rg" | "number" | "address" | "dayNumber";
+type StepType = "text" | "email" | "tel" | "currency" | "select" | "textarea" | "cpf" | "cnpj" | "cep" | "date" | "rg" | "number" | "address";
 
 interface Step {
   name: keyof FormData;
@@ -185,9 +185,9 @@ export default function MultiStepForm({ token }: FormProps) {
 
     baseSteps.push({
       name: "dataInicioContrato",
-      label: "Qual data você gostaria de receber seus rendimentos?",
-      type: "dayNumber",
-      placeholder: "",
+      label: "Qual é a data de início do contrato?",
+      type: "date",
+      placeholder: "DD/MM/AAAA",
       required: true,
     });
 
@@ -459,7 +459,7 @@ export default function MultiStepForm({ token }: FormProps) {
     }
   }, [formData.chavePixCliente, formData.chavePixTerceiro, formData.aceiteLGPD]);
 
-  // if (submitStatus === "success") return <FormSuccess />;
+  if (submitStatus === "success") return <FormSuccess />;
 
   if (!currentStep) return null;
 
@@ -609,13 +609,6 @@ export default function MultiStepForm({ token }: FormProps) {
       return hasValidCep && hasLogradouro && hasBairro && hasCidade && hasEstado;
     }
 
-    if (currentStep.type === "dayNumber") {
-      const day = parseInt(stringValue, 10);
-      const agora = new Date();
-      const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0).getDate();
-      return !isNaN(day) && day >= 1 && day <= ultimoDia;
-    }
-
     if (currentStep.type === "date") {
       // Data precisa estar no formato DD/MM/AAAA
       const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
@@ -672,13 +665,8 @@ export default function MultiStepForm({ token }: FormProps) {
   }
 
   function preparePayload(data: FormData) {
-    // Construir data completa a partir do dia digitado + mês/ano corrente
-    const dia = (data.dataInicioContrato || "").padStart(2, "0");
-    const agora = new Date();
-    const mes = String(agora.getMonth() + 1).padStart(2, "0");
-    const ano = String(agora.getFullYear());
-    const dataInicioContrato = dia ? `${dia}/${mes}/${ano}` : "";
-    const diaPagamento = dia;
+    // Extrair o dia de dataInicioContrato (formato DD/MM/AAAA)
+    const diaPagamento = data.dataInicioContrato ? data.dataInicioContrato.split("/")[0] : "";
     const anoAtual = new Date().getFullYear();
 
     // Formatar data no padrão DD/MM/YYYY HH:mm no timezone de São Paulo
@@ -718,7 +706,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
       investimento: {
         valorInvestimento: data.valorInvestimento,
-        dataInicioContrato: dataInicioContrato,
+        dataInicioContrato: data.dataInicioContrato,
         diaPagamento: diaPagamento,
 
         // ✅ REGRA OFICIAL DO CONTRATO
@@ -1319,30 +1307,6 @@ export default function MultiStepForm({ token }: FormProps) {
               </div>
             </div>
           )}
-
-          {currentStep.type === "dayNumber" && (() => {
-            const agora = new Date();
-            const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0).getDate();
-            return (
-              <NumberInput
-                ref={inputRef as any}
-                value={typeof formData[currentStep.name] === "string" ? formData[currentStep.name] as string : ""}
-                onChange={(value) => {
-                  const num = parseInt(value, 10);
-                  if (value === "" || (!isNaN(num) && num >= 1 && num <= ultimoDia)) {
-                    handleChange(currentStep.name, value);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && canProceed()) {
-                    e.preventDefault();
-                    handleNext();
-                  }
-                }}
-                placeholder={`Escolha um dia entre 1 e ${ultimoDia}`}
-              />
-            );
-          })()}
 
           {currentStep.type === "date" && (
             <DateInput
