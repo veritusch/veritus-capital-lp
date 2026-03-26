@@ -605,7 +605,7 @@ export default function MultiStepForm({ token }: FormProps) {
       const hasBairro = Boolean(formData.bairro?.trim());
       const hasCidade = Boolean(formData.cidade?.trim());
       const hasEstado = Boolean(formData.estado?.trim());
-      
+
       return hasValidCep && hasLogradouro && hasBairro && hasCidade && hasEstado;
     }
 
@@ -756,35 +756,6 @@ export default function MultiStepForm({ token }: FormProps) {
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   }
 
-  function formatDateToExtended(dateStr: string) {
-    // espera DD/MM/YYYY e retorna "DD de Mês de YYYY"
-    const [day, month, year] = dateStr.split("/");
-    if (!day || !month || !year) return "";
-
-    const monthNames = [
-      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
-
-    const monthIndex = parseInt(month, 10) - 1;
-    const monthName = monthNames[monthIndex] || "";
-
-    return `${parseInt(day, 10)} de ${monthName} de ${year}`;
-  }
-
-  function currencyToNumber(currencyStr: string): number {
-    // Remove "R$", espaços, pontos de milhares e substitui vírgula por ponto
-    const numStr = currencyStr.replace(/R\$\s?/g, "").replace(/\./g, "").replace(",", ".");
-    return parseFloat(numStr) || 0;
-  }
-
-  function numberToCurrency(value: number): string {
-    return value.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  }
-
   // Para BR remove o +55, para outros países mantém o formato internacional
   function stripDialCode(phone: string): string {
     const brMatch = phone.match(/^\+55\s?(.*)/);
@@ -794,15 +765,9 @@ export default function MultiStepForm({ token }: FormProps) {
 
   function flattenPayload(payload: ReturnType<typeof preparePayload>) {
 
-    // Calcular valor_juros: 5% do valor_investimento
-    const valorInvestimentoNumero = currencyToNumber(payload.investimento.valorInvestimento || "0");
-    const valorJurosNumero = valorInvestimentoNumero * 0.05;
-    const valorJurosFormatado = numberToCurrency(valorJurosNumero);
-
     const flat: Record<string, any> = {
       id: payload.id,
       cliente_nomeCompleto: payload.cliente.nomeCompleto || "",
-      cliente_primeiroNome: getFirstName(payload.cliente.nomeCompleto || ""),
       cliente_email: payload.cliente.email || "",
       cliente_telefone: stripDialCode(payload.cliente.telefone || ""),
       cliente_numeroWhatsapp: stripDialCode(payload.cliente.numeroWhatsapp || "").replace(/\D/g, ""),
@@ -811,7 +776,7 @@ export default function MultiStepForm({ token }: FormProps) {
       cliente_dataNascimento: formatDateToISO(payload.cliente.dataNascimento || ""),
 
       logradouro: payload.endereco.logradouro || "",
-      numero_residencia: payload.endereco.numeroResidencia || "s/n",
+      numero_residencia: String(payload.endereco.numeroResidencia || "s/n"),
       complemento: payload.endereco.complemento || "",
       bairro: payload.endereco.bairro || "",
       cep: payload.endereco.cep || "",
@@ -819,19 +784,15 @@ export default function MultiStepForm({ token }: FormProps) {
       estado: payload.endereco.estado || "",
 
       valor_investimento: payload.investimento.valorInvestimento || "",
-      valor_juros: valorJurosFormatado,
-      data_inicio_contrato: formatDateToExtended(payload.investimento.dataInicioContrato || ""),
+      data_inicio_contrato: formatDateToISO(payload.investimento.dataInicioContrato || ""),
       dia_pagamento: Number(payload.investimento.diaPagamento || 0),
       cliente_chavePix: payload.investimento.chavePixCliente || "",
 
-      meta_desejaHerdeiros: payload.meta.desejaHerdeiros || "",
-      meta_depositoTerceiro: payload.meta.depositoTerceiro || "",
-      aceite_lgpd: payload.meta.aceiteLGPD ? "Sim" : "Não",
+      meta_desejaHerdeiros: payload.meta.desejaHerdeiros === "Sim",
+      meta_depositoTerceiro: payload.meta.depositoTerceiro === "Sim",
+      aceite_lgpd: payload.meta.aceiteLGPD,
 
       token_forms: token || "",
-      ano_atual: payload.anoAtual ? String(payload.anoAtual) : "",
-      data_criacao_registro: payload.dataCadastro || "",
-      status_contrato: "Cadastro Recebido",
     };
 
     // Herdeiros (até 3)
@@ -916,7 +877,7 @@ export default function MultiStepForm({ token }: FormProps) {
 
       // ========== MOCK - REMOVER DEPOIS ==========
       // Simula envio bem-sucedido sem chamar a API
-      
+
       // await new Promise(resolve => setTimeout(resolve, 1500));
       // setSubmitStatus("success");
       // removeToken(token);
@@ -935,7 +896,7 @@ export default function MultiStepForm({ token }: FormProps) {
       }
 
       setSubmitStatus("success");
-      
+
       // Invalida o token após envio bem-sucedido
       removeToken(token);
     } catch (err) {
